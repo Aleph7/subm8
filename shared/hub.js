@@ -4,19 +4,22 @@
  */
 (function () {
   'use strict';
-  const { icon, esc, fmt, ymNow, monthLabel, contactChannels, loadHost, copyText } = window.SM;
+  const SM = window.SM;
+  const { icon, esc, fmt, ymNow, monthLabel, contactChannels, loadHost, copyText, t, getLang, toggleLang, toast } = SM;
 
   const SITES = [
     {
       id: 'youtube', theme: 'youtube', href: 'youtube/index.html', logo: 'play',
       title: 'YouTube Premium Family',
       text: 'Ad-free video and YouTube Music for the family group.',
+      textTh: 'ดูวิดีโอไม่มีโฆษณาคั่น และ YouTube Music สำหรับกลุ่มแฟมิลี่',
       defaults: { members: 5, perPerson: 67, total: 399 }
     },
     {
       id: 'apple', theme: 'apple', href: 'apple/index.html', logo: 'cloud',
       title: 'Apple One Family',
       text: 'Apple One with 2 TB iCloud+, shared through Family Sharing.',
+      textTh: 'Apple One พร้อม iCloud+ 2 TB แชร์ผ่านระบบ Family Sharing',
       defaults: { members: 5, perPerson: 142, total: 848 }
     }
   ];
@@ -38,18 +41,19 @@
 
   function card(s) {
     const st = readStats(s);
+    const desc = getLang() === 'th' ? s.textTh : s.text;
     return `
     <a class="site-card" data-theme="${s.theme}" href="${s.href}" aria-label="Open ${esc(s.title)}">
       <div class="site-card-top">
         <span class="brand-logo">${icon(s.logo)}</span>
-        <div><h2>${esc(s.title)}</h2><p>${esc(s.text)}</p></div>
+        <div><h2>${esc(s.title)}</h2><p>${esc(desc)}</p></div>
       </div>
       <div class="site-stats">
-        <div class="site-stat"><div class="k">Members</div><div class="v">${st.n}</div></div>
-        <div class="site-stat"><div class="k">Per member</div><div class="v">${fmt(st.pp)}</div></div>
-        <div class="site-stat"><div class="k">Unpaid</div><div class="v">${fmt(st.outstanding)}</div></div>
+        <div class="site-stat"><div class="k">${esc(t('tabMembers'))}</div><div class="v">${st.n}</div></div>
+        <div class="site-stat"><div class="k">${esc(t('perMember'))}</div><div class="v">${fmt(st.pp)}</div></div>
+        <div class="site-stat"><div class="k">${esc(t('outstanding'))}</div><div class="v">${fmt(st.outstanding)}</div></div>
       </div>
-      <span class="btn btn-primary btn-block">Open dashboard ${icon('arrowR', 'sm')}</span>
+      <span class="btn btn-primary btn-block">${esc(t('openDashboard'))} ${icon('arrowR', 'sm')}</span>
     </a>`;
   }
 
@@ -65,45 +69,68 @@
           </a>
           <button class="icon-btn" data-copy="${esc(c.value)}" aria-label="Copy ${c.label}">${icon('copy', 'sm')}</button>
         </div>`).join('')
-      : `<div class="contact-note">${icon('plus', 'sm')}<span>No contact details yet. Open either dashboard and use the settings icon to add your LINE, phone and email.</span></div>`;
+      : `<div class="contact-note">${icon('plus', 'sm')}<span>${esc(t('noContactDetailsYet'))}</span></div>`;
     return `
     <section class="panel hub-contact" aria-labelledby="contactTitle">
       <div class="panel-head">
-        <div><div class="panel-title" id="contactTitle">Contact your host</div>
+        <div><div class="panel-title" id="contactTitle">${esc(t('contactHostTitle'))}</div>
         <div class="panel-desc">${esc(host.name)} · ${esc(host.title)} — ${esc(host.hours)}</div></div>
       </div>
       <div class="panel-body"><div class="contact-list">${items}</div></div>
     </section>`;
   }
 
-  document.getElementById('app').innerHTML = `
-    <header class="topbar">
-      <div class="container topbar-inner">
-        <a class="brand" href="index.html">
-          <span class="brand-logo">${icon('users')}</span>
-          <span><span class="brand-name" style="display:block">subm8</span><span class="brand-sub" style="display:block">Family subscription manager</span></span>
-        </a>
-      </div>
-    </header>
-    <section class="hero hub-hero">
-      <div class="container hero-inner" style="flex-direction:column;align-items:center;text-align:center">
-        <span class="hero-eyebrow">${icon('calendar', 'sm')} ${esc(monthLabel(ymNow()))}</span>
-        <h1>Shared subscriptions,<br>sorted for every family</h1>
-        <p>Track monthly payments, send reminders and keep each family group organised in its own space.</p>
-      </div>
-    </section>
-    <main class="container">
-      <div class="hub-grid">${SITES.map(card).join('')}</div>
-      ${contact()}
-    </main>
-    <footer class="footer">
-      <div class="container footer-inner">
-        <div class="footer-brand"><b>subm8</b><span>Data is stored privately in this browser.</span></div>
-      </div>
-    </footer>`;
+  function render() {
+    const app = document.getElementById('app');
+    if (!app) return;
+    app.innerHTML = `
+      <header class="topbar">
+        <div class="container topbar-inner">
+          <a class="brand" href="index.html">
+            <span class="brand-logo">${icon('users')}</span>
+            <span><span class="brand-name" style="display:block">subm8</span><span class="brand-sub" style="display:block">${esc(t('brandSub'))}</span></span>
+          </a>
+          <div class="topbar-spacer"></div>
+          <div class="topbar-actions">
+            <button class="lang-pill" data-action="toggle-lang" title="${esc(t('langTitle'))}" aria-label="${esc(t('langTitle'))}">
+              <span>${esc(t('langBtn'))}</span>
+            </button>
+          </div>
+        </div>
+      </header>
+      <section class="hero hub-hero">
+        <div class="container hero-inner" style="flex-direction:column;align-items:center;text-align:center">
+          <span class="hero-eyebrow">${icon('calendar', 'sm')} ${esc(monthLabel(ymNow()))}</span>
+          <h1>${t('hubHeadline')}</h1>
+          <p>${esc(t('hubTagline'))}</p>
+        </div>
+      </section>
+      <main class="container">
+        <div class="hub-grid">${SITES.map(card).join('')}</div>
+        ${contact()}
+      </main>
+      <footer class="footer">
+        <div class="container footer-inner">
+          <div class="footer-brand"><b>subm8</b><span>${esc(t('dataStoredPrivately'))}</span></div>
+        </div>
+      </footer>`;
+  }
 
   document.addEventListener('click', (e) => {
+    const langBtn = e.target.closest('[data-action="toggle-lang"]');
+    if (langBtn) {
+      e.preventDefault();
+      const next = toggleLang();
+      render();
+      toast(next === 'th' ? 'เปลี่ยนเป็นภาษาไทยแล้ว' : 'Switched to English');
+      return;
+    }
     const b = e.target.closest('[data-copy]');
-    if (b) { e.preventDefault(); copyText(b.dataset.copy, 'Copied'); }
+    if (b) {
+      e.preventDefault();
+      copyText(b.dataset.copy, t('copied'));
+    }
   });
+
+  render();
 })();

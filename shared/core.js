@@ -71,9 +71,351 @@
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
   }
 
+  const LANG_KEY = 'subm8.lang';
+
+  const I18N = {
+    th: {
+      langBtn: '🇹🇭 TH',
+      langTitle: 'เปลี่ยนเป็นภาษาอังกฤษ / Switch to English',
+      brandSub: 'ระบบจัดการแชร์สตรีมมิ่ง & แฟมิลี่',
+      allFamilies: 'รวมแฟมิลี่ทั้งหมด',
+      contactHost: 'ติดต่อโฮสต์',
+      hostLogin: 'เข้าสู่ระบบโฮสต์',
+      hostMode: 'โหมดโฮสต์',
+      hostLock: 'ล็อกโหมดโฮสต์',
+      hostSettings: 'ข้อมูลโฮสต์ & บัญชีรับเงิน',
+      backupRestore: 'สำรอง & กู้คืนข้อมูล',
+      planCost: 'ค่าบริการรายเดือน',
+      perMonth: ' / เดือน',
+      perMember: 'คนละ',
+      dueDay: 'ครบกำหนดวันที่',
+      seats: 'จำนวนคน',
+      paidCount: 'จ่ายแล้ว {paid} จาก {n} คน',
+      collected: 'ยอดที่เก็บได้แล้ว',
+      collectedSub: 'จ่ายแล้ว {paid} จาก {n} คน',
+      outstanding: 'ยอดค้างชำระ',
+      outstandingSub: 'ยังไม่จ่าย {unpaid} คน',
+      planCostLabel: 'ค่าบริการรายเดือน',
+      billedOnDay: 'ตัดรอบบิลทุกวันที่ {day} ของเดือน',
+      netCost: 'ส่วนต่างที่โฮสต์ออก',
+      surplus: 'ส่วนเกิน',
+      whenAllPay: 'เมื่อสมาชิกทุกคนจ่ายคนละ {pp}',
+      tabPayments: 'รายการชำระเงิน',
+      tabMembers: 'สมาชิก',
+      tabPlan: 'แพ็กเกจ & ราคา',
+      monthlyPayments: 'การชำระเงินประจำเดือน',
+      trackPaymentsDesc: 'บันทึกและตรวจสอบสถานะการโอนเงินของ {month}',
+      today: 'เดือนนี้',
+      searchPlaceholder: 'ค้นหาชื่อสมาชิกหรือเบอร์ติดต่อ...',
+      filterAll: 'ทั้งหมด',
+      filterPending: 'ยังไม่จ่าย',
+      filterPaid: 'จ่ายแล้ว',
+      copyPending: 'คัดลอกรายชื่อคนค้างชำระ',
+      markAllPaid: 'ทำเครื่องหมายจ่ายครบทุกคน',
+      confirmMarkAll: 'ต้องการทำเครื่องหมายจ่ายครบทุกคนสำหรับ {month} หรือไม่?',
+      historyTitle: 'สถิติการจ่ายเงินย้อนหลัง 6 เดือน',
+      noMembersYet: 'ยังไม่มีสมาชิก',
+      noMembersYetSub: 'เพิ่มสมาชิกที่ร่วมหารในแท็บสมาชิก',
+      noMatching: 'ไม่พบสมาชิกที่ตรงกับการค้นหา',
+      noMatchingSub: 'ลองค้นหาด้วยชื่อหรือเบอร์ติดต่ออื่น',
+      member: 'สมาชิก',
+      amount: 'ยอดชำระ',
+      status: 'สถานะ',
+      actions: 'จัดการ',
+      paid: 'จ่ายแล้ว',
+      unpaid: 'ยังไม่จ่าย',
+      undo: 'ยกเลิก',
+      markPaid: 'บันทึกจ่ายแล้ว',
+      payNow: 'ชำระเงิน',
+      invoice: 'ใบแจ้งยอด',
+      copyReminder: 'คัดลอกข้อความทวง',
+      reminderCopied: 'คัดลอกข้อความทวงเงินเรียบร้อย',
+      familyMembers: 'สมาชิกในแฟมิลี่',
+      familyMembersDesc: 'รายชื่อสมาชิกที่ร่วมแชร์แพ็กเกจ {plan}',
+      addMember: 'เพิ่มสมาชิก',
+      editMember: 'แก้ไขข้อมูลสมาชิก',
+      seatsUsed: 'สิทธิ์ที่ใช้ไป',
+      seatsOf: '{used} จาก {max} คน',
+      overCapacity: ' · เกินจำนวนสิทธิ์ที่กำหนด',
+      noContactAdded: 'ไม่ได้ระบุช่องทางติดต่อ',
+      familyMemberDefault: 'สมาชิกแฟมิลี่',
+      planSettings: 'แพ็กเกจ & การหารเงิน',
+      planSettingsDesc: 'ปรับเปลี่ยนราคาแพ็กเกจและวิธีหารค่าบริการ',
+      planName: 'ชื่อแพ็กเกจ',
+      monthlyCost: 'ราคารวมต่อเดือน',
+      seatsAvailable: 'จำนวนคนทั้งหมดในแฟมิลี่',
+      chargePerMember: 'ยอดเก็บต่อคน',
+      autoRound: 'ปัดเศษขึ้น',
+      autoHint: 'เว้นว่างไว้เพื่อหารเท่าอัตโนมัติ หรือกด "ปัดเศษขึ้น" เพื่อปัดเศษสตางค์',
+      billingDayOfMonth: 'วันที่ตัดรอบบิลของทุกเดือน',
+      hostSharesSeat: 'โฮสต์ใช้ด้วย 1 สิทธิ์',
+      hostSharesSeatSub: 'โฮสต์เป็นหนึ่งในสมาชิกที่ใช้งาน และรับผิดชอบค่าใช้จ่ายส่วนที่เหลือ',
+      notes: 'หมายเหตุ / กฎการแชร์',
+      saveChanges: 'บันทึกการเปลี่ยนแปลง',
+      unlockToEdit: 'ปลดล็อกโหมดโฮสต์เพื่อแก้ไข',
+      memberViewBannerTitle: 'มุมมองสมาชิก (Member view)',
+      memberViewBannerDesc: 'ข้อมูลแพ็กเกจและการหารเงินดูแลโดยโฮสต์',
+      howItBreaksDown: 'สรุปการแบ่งจ่าย',
+      exactSplit: 'ราคาหารตรงตัว ({total} ÷ {seats})',
+      membersEnrolled: 'จำนวนสมาชิกปัจจุบัน',
+      collectedWhenAll: 'ยอดรวมเมื่อทุกคนจ่าย',
+      invoiceTitle: 'ใบแจ้งยอดชำระเงิน',
+      totalDue: 'ยอดที่ต้องชำระ',
+      promptPayTitle: 'พร้อมเพย์ (PromptPay)',
+      promptPayFallback: 'ระบุเบอร์พร้อมเพย์ใน "ข้อมูลโฮสต์" เพื่อแสดง QR Code',
+      promptPayOffline: 'ต้องการอินเทอร์เน็ตเพื่อโหลด QR Code กรุณาโอนเงิน {amount} ไปที่',
+      sendSlipToHost: 'ส่งสลิปให้โฮสต์',
+      close: 'ปิด',
+      cancel: 'ยกเลิก',
+      hostProfileTitle: 'ข้อมูลโฮสต์ & บัญชีรับเงิน',
+      hostProfileSub: 'ข้อมูลนี้จะใช้ร่วมกันทุกแฟมิลี่ในระบบ',
+      aboutYou: 'ข้อมูลผู้ดูแล (โฮสต์)',
+      displayName: 'ชื่อที่แสดง',
+      roleTagline: 'บทบาท / คำแนะนำตัว',
+      availabilityNote: 'เวลาที่สะดวกตอบข้อความ',
+      contactChannels: 'ช่องทางติดต่อ',
+      paymentDetails: 'ข้อมูลรับชำระเงิน',
+      promptPayLabel: 'พร้อมเพย์ (เบอร์โทร หรือ เลขบัตร ปชช. 13 หลัก)',
+      promptPaySub: 'ใช้สร้าง QR Code พร้อมเพย์ที่ระบุยอดเงินให้อัตโนมัติ',
+      bankName: 'ธนาคาร',
+      bankAccount: 'เลขที่บัญชี',
+      hostSecurityTitle: 'รหัสผ่านความปลอดภัย (PIN)',
+      hostPinLabel: 'รหัส PIN โฮสต์ (4 หลัก)',
+      hostPinHint: 'รหัสผ่านสำหรับเข้าแก้ไขสมาชิก ราคาแพ็กเกจ ข้อมูลโฮสต์ และบันทึกการจ่ายเงิน (ค่าเริ่มต้นคือ 1234)',
+      reminderTemplate: 'เทมเพลตข้อความทวงเงิน',
+      templateHint: 'ตัวแปรที่ใช้ได้: {name} {plan} {month} {amount} {due} {promptpay} {bank} {account}',
+      saveProfile: 'บันทึกข้อมูลโฮสต์',
+      hostVerificationTitle: 'ยืนยันตัวตนโฮสต์',
+      enterPinToUnlock: 'ใส่รหัส PIN 4 หลักเพื่อปลดล็อกโหมดโฮสต์',
+      enterPinTo: 'ใส่รหัส PIN เพื่อ {action}',
+      defaultPinNote: 'รหัสผ่านเริ่มต้นคือ 1234 (สามารถเปลี่ยนได้ที่การตั้งค่าโฮสต์)',
+      incorrectPin: 'รหัส PIN ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
+      unlockHostMode: 'ปลดล็อกโหมดโฮสต์',
+      contactHostTitle: 'ติดต่อโฮสต์',
+      contactHostSub: 'มีคำถามเรื่องยอดชำระ สิทธิ์แฟมิลี่ หรือต้องการส่งสลิป ติดต่อได้ตลอดเวลาครับ',
+      sendQuickMsg: 'ส่งข้อความด่วน',
+      yourName: 'ชื่อของคุณ',
+      whoIsThisFrom: 'ระบุชื่อผู้ส่ง',
+      messageText: 'ข้อความ',
+      msgPlaceholder: 'เช่น โอนเงินค่าบริการเดือนนี้ให้เรียบร้อยแล้วครับ แนบสลิปมาด้วย...',
+      sendEmail: 'ส่งทางอีเมล',
+      copyForChat: 'คัดลอกส่งทาง LINE / แชท',
+      noContactDetailsYet: 'ยังไม่ได้ระบุช่องทางติดต่อ',
+      addYoursPrompt: 'เพิ่มข้อมูลติดต่อของคุณ',
+      backupTitle: 'สำรอง & กู้คืนข้อมูล',
+      backupSub: 'ข้อมูลทั้งหมดเก็บอยู่ในเบราว์เซอร์นี้ คุณสามารถดาวน์โหลดไฟล์เก็บไว้ได้',
+      exportBackup: 'ดาวน์โหลดไฟล์สำรอง (JSON)',
+      importBackup: 'กู้คืนข้อมูลจากไฟล์',
+      resetDefaults: 'รีเซ็ตกลับเป็นค่าเริ่มต้น',
+      resetWarning: 'ต้องการรีเซ็ตไซต์นี้กลับเป็นค่าเริ่มต้นหรือไม่? รายชื่อสมาชิกและประวัติการจ่ายเงินจะถูกล้าง',
+      dataStoredPrivately: 'ข้อมูลบันทึกอย่างปลอดภัยในเบราว์เซอร์นี้',
+      hostModeActive: 'โหมดโฮสต์ทำงานอยู่',
+      lock: 'ล็อก',
+      memberView: 'มุมมองสมาชิก',
+      unpaidSummaryCopied: 'คัดลอกรายชื่อคนค้างชำระเรียบร้อย',
+      allMarkedPaid: 'บันทึกจ่ายแล้วครบทุกคนเรียบร้อย',
+      memberUpdated: 'อัปเดตข้อมูลสมาชิกเรียบร้อย',
+      memberAdded: 'เพิ่มสมาชิกเรียบร้อย',
+      planUpdated: 'อัปเดตแพ็กเกจเรียบร้อย',
+      hostSaved: 'บันทึกข้อมูลโฮสต์เรียบร้อย',
+      hostUnlocked: 'ปลดล็อกโหมดโฮสต์เรียบร้อย',
+      hostLocked: 'ล็อกโหมดโฮสต์เรียบร้อย',
+      copied: 'คัดลอกเรียบร้อย',
+      hubHeadline: 'แชร์ค่าบริการแฟมิลี่<br>จัดการง่ายทุกกลุ่ม',
+      hubTagline: 'ติดตามการจ่ายเงินรายเดือน ส่งแจ้งเตือน และจัดการสมาชิกแต่ละแฟมิลี่แยกกันอย่างเป็นระเบียบ',
+      openDashboard: 'เปิดหน้าจัดการ',
+      exportConfig: 'คัดลอกการตั้งค่าเริ่มต้นสำหรับเว็บไซต์'
+    },
+    en: {
+      langBtn: '🇬🇧 EN',
+      langTitle: 'สลับเป็นภาษาไทย / Switch to Thai',
+      brandSub: 'Family sharing manager',
+      allFamilies: 'All family sites',
+      contactHost: 'Contact host',
+      hostLogin: 'Host login',
+      hostMode: 'Host Mode',
+      hostLock: 'Lock Host Mode',
+      hostSettings: 'Host profile & settings',
+      backupRestore: 'Backup & restore',
+      planCost: 'Plan cost',
+      perMonth: ' /mo',
+      perMember: 'Per member',
+      dueDay: 'Due day',
+      seats: 'Seats',
+      paidCount: '{paid} of {n} paid',
+      collected: 'Collected',
+      collectedSub: '{paid} of {n} members paid',
+      outstanding: 'Outstanding',
+      outstandingSub: '{unpaid} member{s} to follow up',
+      planCostLabel: 'Plan cost',
+      billedOnDay: 'Billed on day {day} each month',
+      netCost: 'Your net cost',
+      surplus: 'Surplus',
+      whenAllPay: 'When all {n} members pay {pp}',
+      tabPayments: 'Payments',
+      tabMembers: 'Members',
+      tabPlan: 'Plan & billing',
+      monthlyPayments: 'Monthly payments',
+      trackPaymentsDesc: 'Track who has paid for {month}.',
+      today: 'Today',
+      searchPlaceholder: 'Search members...',
+      filterAll: 'All',
+      filterPending: 'Unpaid',
+      filterPaid: 'Paid',
+      copyPending: 'Copy unpaid summary',
+      markAllPaid: 'Mark all paid',
+      confirmMarkAll: 'Mark every member as paid for {month}?',
+      historyTitle: 'Last 6 months · collection rate',
+      noMembersYet: 'No members yet',
+      noMembersYetSub: 'Add the people who share this plan in the Members tab.',
+      noMatching: 'No matching members',
+      noMatchingSub: 'Try a different search or filter.',
+      member: 'Member',
+      amount: 'Amount',
+      status: 'Status',
+      actions: 'Actions',
+      paid: 'Paid',
+      unpaid: 'Unpaid',
+      undo: 'Undo',
+      markPaid: 'Mark paid',
+      payNow: 'Pay',
+      invoice: 'Invoice',
+      copyReminder: 'Copy reminder',
+      reminderCopied: 'Reminder message copied',
+      familyMembers: 'Family members',
+      familyMembersDesc: 'Everyone sharing the {plan} plan.',
+      addMember: 'Add member',
+      editMember: 'Edit member',
+      seatsUsed: 'Seats used',
+      seatsOf: '{used} of {max}',
+      overCapacity: ' · over capacity',
+      noContactAdded: 'No contact added',
+      familyMemberDefault: 'Family member',
+      planSettings: 'Plan & billing',
+      planSettingsDesc: 'Update the subscription price and how it is split.',
+      planName: 'Plan name',
+      monthlyCost: 'Monthly cost',
+      seatsAvailable: 'Seats available',
+      chargePerMember: 'Charge per member',
+      autoRound: 'Round up',
+      autoHint: 'Leave empty to split equally. "Round up" uses cost ÷ seats, rounded up.',
+      billingDayOfMonth: 'Billing day of month',
+      hostSharesSeat: 'I take one seat',
+      hostSharesSeatSub: 'The host is part of the family plan and covers the remainder.',
+      notes: 'Notes',
+      saveChanges: 'Save changes',
+      unlockToEdit: 'Unlock Host Mode to edit',
+      memberViewBannerTitle: 'Member view',
+      memberViewBannerDesc: 'Subscription settings and seat allocation are managed by your host.',
+      howItBreaksDown: 'How it breaks down',
+      exactSplit: 'Exact split ({total} ÷ {seats})',
+      membersEnrolled: 'Members enrolled',
+      collectedWhenAll: 'Collected when everyone pays',
+      invoiceTitle: 'Invoice',
+      totalDue: 'Total due',
+      promptPayTitle: 'PromptPay',
+      promptPayFallback: 'Add your PromptPay number in Host profile to show a scannable QR code.',
+      promptPayOffline: 'QR image needs an internet connection. Transfer {amount} to',
+      sendSlipToHost: 'Send slip to host',
+      close: 'Close',
+      cancel: 'Cancel',
+      hostProfileTitle: 'Host profile & settings',
+      hostProfileSub: 'Shared across every family site on this browser.',
+      aboutYou: 'About you',
+      displayName: 'Display name',
+      roleTagline: 'Role / tagline',
+      availabilityNote: 'Availability note',
+      contactChannels: 'Contact channels',
+      paymentDetails: 'Payment details',
+      promptPayLabel: 'PromptPay (phone or 13-digit ID)',
+      promptPaySub: 'Used to generate a scannable QR code with the exact amount.',
+      bankName: 'Bank',
+      bankAccount: 'Account number',
+      hostSecurityTitle: 'Host Security & Passcode',
+      hostPinLabel: 'Host PIN / Passcode',
+      hostPinHint: 'Passcode required to edit members, prices, host details, or mark payments. Default is 1234.',
+      reminderTemplate: 'Reminder message template',
+      templateHint: 'Placeholders: {name} {plan} {month} {amount} {due} {promptpay} {bank} {account}',
+      saveProfile: 'Save profile',
+      hostVerificationTitle: 'Host Verification',
+      enterPinToUnlock: 'Enter your 4-digit host passcode to unlock host controls.',
+      enterPinTo: 'Enter passcode to {action}.',
+      defaultPinNote: 'Default passcode is 1234. You can change this anytime in Host Settings.',
+      incorrectPin: 'Incorrect passcode. Please try again.',
+      unlockHostMode: 'Unlock Host Mode',
+      contactHostTitle: 'Contact your host',
+      contactHostSub: 'Questions about payments, seats or joining the plan? Reach out any time.',
+      sendQuickMsg: 'Send a quick message',
+      yourName: 'Your name',
+      whoIsThisFrom: 'Who is this from?',
+      messageText: 'Message',
+      msgPlaceholder: 'e.g. I have paid this month share - slip attached.',
+      sendEmail: 'Send by email',
+      copyForChat: 'Copy for LINE / chat',
+      noContactDetailsYet: 'No contact details yet.',
+      addYoursPrompt: 'Add yours so family members can reach you.',
+      backupTitle: 'Backup & restore',
+      backupSub: 'Your data lives in this browser. Keep a copy somewhere safe.',
+      exportBackup: 'Download a JSON backup',
+      importBackup: 'Restore from a backup file',
+      resetDefaults: 'Restore this site defaults',
+      resetWarning: 'Reset this site to its defaults? Members and payment history will be replaced.',
+      dataStoredPrivately: 'Data is stored privately in this browser.',
+      hostModeActive: 'Host Mode active',
+      lock: 'Lock',
+      memberView: 'Member view',
+      unpaidSummaryCopied: 'Unpaid summary copied',
+      allMarkedPaid: 'All members marked as paid',
+      memberUpdated: 'Member updated',
+      memberAdded: 'Member added',
+      planUpdated: 'Plan updated',
+      hostSaved: 'Host profile saved',
+      hostUnlocked: 'Host Mode unlocked',
+      hostLocked: 'Host Mode locked',
+      copied: 'Copied',
+      hubHeadline: 'Shared subscriptions,<br>sorted for every family',
+      hubTagline: 'Track monthly payments, send reminders and keep each family group organised in its own space.',
+      openDashboard: 'Open dashboard',
+      exportConfig: 'Copy config for website defaults'
+    }
+  };
+
+  function getLang() {
+    try {
+      return localStorage.getItem(LANG_KEY) || 'th';
+    } catch (e) {
+      return 'th';
+    }
+  }
+
+  function setLang(l) {
+    try {
+      localStorage.setItem(LANG_KEY, l);
+      document.documentElement.lang = l;
+    } catch (e) {}
+  }
+
+  function toggleLang() {
+    const next = getLang() === 'th' ? 'en' : 'th';
+    setLang(next);
+    return next;
+  }
+
+  function t(key, vars) {
+    const lang = getLang();
+    const dict = I18N[lang] || I18N.th;
+    let s = dict[key] != null ? dict[key] : (I18N.en && I18N.en[key] != null ? I18N.en[key] : key);
+    if (vars && typeof vars === 'object') {
+      s = s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+    }
+    return s;
+  }
+
   function monthLabel(ym, short) {
     const p = ym.split('-').map(Number);
-    return new Date(p[0], p[1] - 1, 1).toLocaleDateString('en-GB', short ? { month: 'short' } : { month: 'long', year: 'numeric' });
+    const lang = getLang();
+    const d = new Date(p[0], p[1] - 1, 1);
+    return d.toLocaleDateString(lang === 'th' ? 'th-TH' : 'en-GB', short ? { month: 'short' } : { month: 'long', year: 'numeric' });
   }
 
   function shiftMonth(ym, delta) {
@@ -117,13 +459,13 @@
     template: DEFAULT_TEMPLATE
   };
 
-  const PIN_SESSION_KEY = 'subm8.host.unlocked';
+  const PIN_STORAGE_KEY = 'subm8.host.unlocked';
 
   function isHostUnlocked(host) {
     const pin = (host && host.pin ? String(host.pin).trim() : '');
     if (!pin) return true;
     try {
-      return sessionStorage.getItem(PIN_SESSION_KEY) === 'true';
+      return localStorage.getItem(PIN_STORAGE_KEY) === 'true' || sessionStorage.getItem(PIN_STORAGE_KEY) === 'true';
     } catch (e) {
       return false;
     }
@@ -132,14 +474,20 @@
   function unlockHost(host, enteredPin) {
     const pin = (host && host.pin ? String(host.pin).trim() : '1234');
     if (String(enteredPin).trim() === pin) {
-      try { sessionStorage.setItem(PIN_SESSION_KEY, 'true'); } catch (e) {}
+      try {
+        localStorage.setItem(PIN_STORAGE_KEY, 'true');
+        sessionStorage.setItem(PIN_STORAGE_KEY, 'true');
+      } catch (e) {}
       return true;
     }
     return false;
   }
 
   function lockHost() {
-    try { sessionStorage.removeItem(PIN_SESSION_KEY); } catch (e) {}
+    try {
+      localStorage.removeItem(PIN_STORAGE_KEY);
+      sessionStorage.removeItem(PIN_STORAGE_KEY);
+    } catch (e) {}
   }
 
   function loadHost() {
@@ -213,10 +561,17 @@
     }
   }
 
+  try {
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.lang = getLang();
+    }
+  } catch (e) {}
+
   global.SM = {
-    HOST_KEY: HOST_KEY, PIN_SESSION_KEY: PIN_SESSION_KEY, icon: icon, esc: esc, fmt: fmt, ymNow: ymNow, monthLabel: monthLabel,
+    HOST_KEY: HOST_KEY, PIN_STORAGE_KEY: PIN_STORAGE_KEY, icon: icon, esc: esc, fmt: fmt, ymNow: ymNow, monthLabel: monthLabel,
     shiftMonth: shiftMonth, avatar: avatar, loadHost: loadHost, saveHost: saveHost,
     isHostUnlocked: isHostUnlocked, unlockHost: unlockHost, lockHost: lockHost,
+    getLang: getLang, setLang: setLang, toggleLang: toggleLang, t: t, I18N: I18N,
     DEFAULT_HOST: DEFAULT_HOST, contactChannels: contactChannels, urlFor: urlFor,
     toast: toast, copyText: copyText
   };
