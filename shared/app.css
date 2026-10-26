@@ -1,6 +1,6 @@
 /* ==========================================================================
-   subm8 — Shared Design System & Gen Z Bento UI
-   Clean, light/chill, responsive for iPhone & desktop.
+   subm8 — Shared Design System & Minimalist Bento UI
+   Clean, modern, responsive for iPhone & desktop.
    ========================================================================== */
 
 :root {
@@ -31,7 +31,7 @@
   --r-sm: 10px;
   --r-md: 14px;
   --r-lg: 20px;
-  --r-xl: 26px;
+  --r-xl: 24px;
   --r-pill: 999px;
 
   --shadow-xs: 0 1px 2px rgba(15, 23, 42, .05);
@@ -102,27 +102,34 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   width: 100%;
   max-width: 1180px;
   margin: 0 auto;
-  padding-left: max(24px, env(safe-area-inset-left));
-  padding-right: max(24px, env(safe-area-inset-right));
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
 }
 
 .text-green { color: var(--green); }
 .text-amber { color: var(--amber); }
 
-/* ---------- Top bar (with iOS safe-area-inset-top support) ---------- */
+/* ---------- Top bar (with generous safe-area & edge spacing) ---------- */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 50;
-  padding-top: env(safe-area-inset-top);
-  background: rgba(255, 255, 255, .86);
+  padding-top: max(env(safe-area-inset-top, 0px), 16px);
+  padding-bottom: 12px;
+  background: rgba(255, 255, 255, .88);
   backdrop-filter: saturate(180%) blur(18px);
   -webkit-backdrop-filter: saturate(180%) blur(18px);
   border-bottom: 1px solid var(--border);
 }
+.topbar > .container {
+  padding-left: max(22px, env(safe-area-inset-left, 0px));
+  padding-right: max(22px, env(safe-area-inset-right, 0px));
+}
 .topbar-inner {
-  display: flex; align-items: center; gap: 12px;
-  min-height: 66px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
 }
 .brand-group { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .hub-back {
@@ -137,7 +144,7 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 .hub-back:active { transform: scale(.96); }
 .topbar-div { width: 1px; height: 22px; background: var(--border); flex: none; }
 
-.brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .brand-logo {
   width: 40px; height: 40px; border-radius: 12px; flex: none;
   display: grid; place-items: center; color: #fff;
@@ -199,7 +206,7 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 .hero {
   background:
     radial-gradient(900px 320px at 88% -15%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 70%),
-    radial-gradient(600px 260px at 10% 110%, rgba(168, 85, 247, .22), transparent 70%),
+    radial-gradient(600px 260px at 10% 110%, rgba(99, 102, 241, .18), transparent 70%),
     linear-gradient(135deg, var(--hero-from), var(--hero-to));
   color: #fff;
   padding: 36px 0 88px;
@@ -261,21 +268,22 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 .kpi-sub { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
 
 /* ==========================================================================
-   "About Me" Gen Z Bento Grid Section
+   "About Me" Minimalist Bento Grid Section
    ========================================================================== */
 .about-bento-wrap {
   margin-top: 32px;
-  scroll-margin-top: 84px;
+  scroll-margin-top: 90px;
 }
 .about-section-head {
   display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
 }
 .about-eyebrow {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
-  color: #6366f1; background: #eef2ff; border: 1px solid #e0e7ff;
-  padding: 6px 14px; border-radius: var(--r-pill);
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-2); background: var(--surface); border: 1px solid var(--border-strong);
+  padding: 6px 13px; border-radius: var(--r-pill); box-shadow: var(--shadow-xs);
 }
+.about-eyebrow .ic { color: var(--accent); }
 
 .bento-grid {
   display: grid;
@@ -291,18 +299,17 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
-  transition: transform .28s var(--spring), box-shadow .25s var(--ease), border-color .2s;
+  transition: transform .25s var(--spring), box-shadow .2s var(--ease), border-color .2s;
 }
 .bento-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: #d0d7de;
+  border-color: var(--border-strong);
 }
 
 .about-bento-wrap.vibe-glow .bento-profile {
   background:
-    radial-gradient(500px 220px at 100% 0%, rgba(168, 85, 247, .10), transparent 70%),
-    radial-gradient(400px 200px at 0% 100%, rgba(56, 189, 248, .10), transparent 70%),
+    radial-gradient(480px 220px at 100% 0%, rgba(99, 102, 241, .06), transparent 70%),
     var(--surface);
 }
 
@@ -321,39 +328,21 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 }
 .bento-photo-frame {
   position: relative;
-  width: 92px;
-  height: 92px;
-  border-radius: 26px;
-  padding: 3px;
-  background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
-  box-shadow: 0 8px 22px rgba(99, 102, 241, .25);
+  width: 88px;
+  height: 88px;
+  border-radius: 22px;
+  padding: 2px;
+  background: linear-gradient(135deg, #4f46e5, #818cf8);
+  box-shadow: 0 6px 18px rgba(79, 70, 229, .18);
   flex: none;
-  transition: transform .3s var(--spring);
-}
-.bento-photo-frame:hover {
-  transform: rotate(-3deg) scale(1.04);
 }
 .bento-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 23px;
+  border-radius: 20px;
   background: #1e1b4b;
   display: block;
-}
-.bento-photo-badge {
-  position: absolute;
-  right: -6px;
-  bottom: -6px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-xs);
-  display: grid;
-  place-items: center;
-  font-size: 15px;
 }
 
 .bento-profile-info {
@@ -361,56 +350,54 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   min-width: 0;
 }
 
-/* Live Status Pill */
+/* Live Status Pill — fits & wraps cleanly without cutting off text */
 .status-live-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 13px;
-  min-height: 36px;
+  padding: 6px 12px;
+  min-height: 34px;
   border-radius: var(--r-pill);
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   color: #15803d;
   font-size: 12.5px;
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 8px;
   max-width: 100%;
-  transition: transform .22s var(--spring), background .15s, box-shadow .15s;
+  text-align: left;
+  transition: transform .2s var(--spring), background .15s;
 }
 .status-live-pill:hover {
   background: #dcfce7;
-  box-shadow: 0 4px 12px rgba(22, 163, 74, .14);
-  transform: scale(1.02);
 }
 .status-live-pill:active {
-  transform: scale(.95);
+  transform: scale(.97);
 }
 .status-pulse {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #22c55e;
+  background: #16a34a;
   flex: none;
-  box-shadow: 0 0 0 0 rgba(34, 197, 94, .7);
-  animation: pulse-green 2s infinite;
+  box-shadow: 0 0 0 0 rgba(22, 163, 74, .6);
+  animation: pulse-green 2.2s infinite;
 }
 @keyframes pulse-green {
-  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, .65); }
-  70% { box-shadow: 0 0 0 7px rgba(34, 197, 94, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, .55); }
+  70% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
 }
 .status-live-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.3;
+  word-break: break-word;
 }
 
 .bento-name {
-  font-size: clamp(20px, 2.6vw, 25px);
+  font-size: clamp(20px, 2.5vw, 24px);
   font-weight: 800;
   letter-spacing: -.025em;
-  line-height: 1.18;
+  line-height: 1.2;
   color: var(--text);
 }
 .bento-role-row {
@@ -423,19 +410,20 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 .bento-tag-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 4px 11px;
   border-radius: var(--r-pill);
   font-size: 12px;
-  font-weight: 700;
-  background: #eef2ff;
-  color: #4338ca;
-  border: 1px solid #e0e7ff;
+  font-weight: 600;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
 }
+.bento-tag-chip .ic { color: var(--accent); width: 14px; height: 14px; }
 .bento-tag-chip.soft {
-  background: #fdf2f8;
-  color: #be185d;
-  border-color: #fce7f3;
+  background: #f8fafc;
+  color: var(--text-2);
+  border-color: var(--border);
 }
 .bento-bio {
   font-size: 14px;
@@ -443,16 +431,13 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   line-height: 1.55;
   background: var(--surface-2);
   padding: 12px 15px;
-  border-radius: 16px;
+  border-radius: 14px;
   border: 1px solid var(--border);
 }
 
 /* 2. Age & Birthday Card (5 cols) */
 .bento-stat-card {
   grid-column: span 5;
-  background:
-    radial-gradient(280px 180px at 100% 0%, rgba(244, 114, 182, .14), transparent 70%),
-    var(--surface);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -465,25 +450,29 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   gap: 8px;
 }
 .bento-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: .07em;
   text-transform: uppercase;
   color: var(--muted);
 }
+.bento-kicker .ic { width: 14px; height: 14px; color: var(--text-2); }
 .bento-mini-badge {
   font-size: 11px;
   font-weight: 700;
   padding: 3px 9px;
   border-radius: var(--r-pill);
-  background: #fdf2f8;
-  color: #db2777;
-  border: 1px solid #fbcfe8;
+  background: var(--surface-2);
+  color: var(--text-2);
+  border: 1px solid var(--border-strong);
 }
 .bento-mini-badge.neon {
-  background: #ecfeff;
-  color: #0e7490;
-  border-color: #a5f3fc;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  border-color: color-mix(in srgb, var(--accent) 22%, transparent);
 }
 .bento-age-row {
   display: flex;
@@ -491,18 +480,16 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   gap: 16px;
 }
 .bento-big-num {
-  font-size: 48px;
+  font-size: 46px;
   font-weight: 800;
   letter-spacing: -.04em;
   line-height: 1;
-  background: linear-gradient(135deg, #4f46e5, #db2777);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 .bento-age-meta b {
   display: block;
-  font-size: 16px;
+  font-size: 15.5px;
   font-weight: 700;
 }
 .bento-age-meta span {
@@ -514,7 +501,7 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   align-items: center;
   align-self: flex-start;
   padding: 6px 12px;
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--surface-2);
   border: 1px solid var(--border);
   font-size: 12.5px;
@@ -525,19 +512,16 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 /* 3. Education Card (4 cols) */
 .bento-edu-card {
   grid-column: span 4;
-  background:
-    radial-gradient(280px 180px at 100% 100%, rgba(56, 189, 248, .12), transparent 70%),
-    var(--surface);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 10px;
 }
 .bento-edu-title {
-  font-size: 16.5px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: -.015em;
-  line-height: 1.28;
+  line-height: 1.3;
   color: var(--text);
 }
 .bento-edu-sub {
@@ -561,7 +545,7 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   color: var(--text-2);
 }
 
-/* 4. Interactive Stickers Card (4 cols) */
+/* 4. Minimalist Skill / Interest Pills Card (4 cols) */
 .bento-stickers-card {
   grid-column: span 4;
   display: flex;
@@ -577,57 +561,54 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 .sticker-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   padding: 8px 13px;
-  min-height: 40px;
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 700;
+  min-height: 38px;
+  border-radius: 11px;
+  font-size: 12.5px;
+  font-weight: 600;
   background: var(--surface-2);
-  border: 1.5px solid var(--border-strong);
+  border: 1px solid var(--border-strong);
   color: var(--text-2);
-  box-shadow: 0 2px 0 rgba(15, 23, 42, .05);
-  transition: transform .22s var(--spring), background .15s, border-color .15s, color .15s, box-shadow .15s;
+  transition: transform .2s var(--spring), background .15s, border-color .15s, color .15s;
 }
-.sticker-pill:nth-child(odd) { transform: rotate(-1deg); }
-.sticker-pill:nth-child(even) { transform: rotate(1deg); }
+.sticker-pill .ic { width: 14px; height: 14px; color: var(--muted); transition: color .15s; }
 .sticker-pill:hover {
-  transform: translateY(-2px) scale(1.04) rotate(0deg);
-  border-color: #818cf8;
+  transform: translateY(-1px);
+  border-color: var(--text-2);
   color: var(--text);
 }
+.sticker-pill:hover .ic { color: var(--text); }
 .sticker-pill:active {
-  transform: scale(.93);
+  transform: scale(.96);
 }
 .sticker-pill.active {
-  background: linear-gradient(135deg, #eef2ff, #fae8ff);
-  border-color: #818cf8;
-  color: #4338ca;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, .16);
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--accent-dark);
+}
+.sticker-pill.active .ic {
+  color: var(--accent);
 }
 
-/* 5. Interactive Vibe & Quote Card (4 cols) */
+/* 5. Interactive Quote & Equalizer Card (4 cols) */
 .bento-vibe-card {
   grid-column: span 4;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 12px;
-  background:
-    radial-gradient(260px 180px at 0% 100%, rgba(168, 85, 247, .10), transparent 70%),
-    var(--surface);
 }
 .bento-quote {
   background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 12px 14px;
   cursor: pointer;
-  transition: transform .2s var(--spring), border-color .15s;
+  transition: border-color .15s;
 }
 .bento-quote:hover {
-  border-color: #a5b4fc;
-  transform: scale(1.01);
+  border-color: var(--border-strong);
 }
 .bento-quote p {
   font-size: 13px;
@@ -637,8 +618,8 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 }
 .bento-quote footer {
   font-size: 11.5px;
-  font-weight: 700;
-  color: #6366f1;
+  font-weight: 600;
+  color: var(--muted);
   margin-top: 6px;
 }
 
@@ -653,39 +634,33 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   justify-content: center;
   gap: 6px;
   padding: 8px 12px;
-  min-height: 40px;
-  border-radius: 12px;
+  min-height: 38px;
+  border-radius: 10px;
   font-size: 12.5px;
-  font-weight: 700;
+  font-weight: 600;
   background: var(--surface-2);
   border: 1px solid var(--border-strong);
-  color: var(--text);
-  transition: transform .22s var(--spring), background .15s, border-color .15s, color .15s;
+  color: var(--text-2);
+  transition: transform .2s var(--spring), background .15s, border-color .15s, color .15s;
 }
+.bento-btn .ic { width: 14px; height: 14px; }
 .bento-btn:hover {
-  background: #eef2ff;
-  border-color: #a5b4fc;
-  color: #4338ca;
-  transform: translateY(-1px);
+  background: var(--surface);
+  border-color: var(--text-2);
+  color: var(--text);
 }
 .bento-btn:active {
-  transform: scale(.95);
+  transform: scale(.96);
 }
 .bento-btn.active {
-  background: #eef2ff;
-  border-color: #818cf8;
-  color: #4338ca;
-}
-.bento-btn.copy-btn .ic {
-  display: none;
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--accent-dark);
 }
 .bento-btn.copy-btn.copied {
   background: var(--green-soft);
-  border-color: #86efac;
+  border-color: color-mix(in srgb, var(--green) 30%, transparent);
   color: var(--green);
-}
-.bento-btn.copy-btn.copied .ic {
-  display: inline-block;
 }
 
 /* Equalizer Visualizer Bars */
@@ -693,30 +668,30 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   display: inline-flex;
   align-items: flex-end;
   gap: 3px;
-  height: 16px;
+  height: 14px;
 }
 .eq-bars span {
-  width: 3px;
-  height: 5px;
+  width: 2.5px;
+  height: 4px;
   border-radius: 99px;
-  background: #818cf8;
+  background: var(--muted);
   transition: height .2s;
 }
-.eq-bars.playing span:nth-child(1) { animation: eq-bounce .7s ease-in-out infinite alternate; }
-.eq-bars.playing span:nth-child(2) { animation: eq-bounce .5s ease-in-out .15s infinite alternate; }
-.eq-bars.playing span:nth-child(3) { animation: eq-bounce .65s ease-in-out .3s infinite alternate; }
-.eq-bars.playing span:nth-child(4) { animation: eq-bounce .55s ease-in-out .1s infinite alternate; }
+.eq-bars.playing span:nth-child(1) { animation: eq-bounce .75s ease-in-out infinite alternate; }
+.eq-bars.playing span:nth-child(2) { animation: eq-bounce .55s ease-in-out .15s infinite alternate; }
+.eq-bars.playing span:nth-child(3) { animation: eq-bounce .68s ease-in-out .3s infinite alternate; }
+.eq-bars.playing span:nth-child(4) { animation: eq-bounce .58s ease-in-out .1s infinite alternate; }
 @keyframes eq-bounce {
-  0% { height: 4px; background: #818cf8; }
-  100% { height: 16px; background: #ec4899; }
+  0% { height: 4px; background: var(--muted); }
+  100% { height: 14px; background: var(--accent); }
 }
 
 .pop-anim {
-  animation: spring-pop .32s var(--spring);
+  animation: spring-pop .28s var(--spring);
 }
 @keyframes spring-pop {
-  0% { transform: scale(.92); }
-  60% { transform: scale(1.04); }
+  0% { transform: scale(.95); }
+  60% { transform: scale(1.02); }
   100% { transform: scale(1); }
 }
 
@@ -796,8 +771,11 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 /* ---------- Rows / table ---------- */
 .rows { display: flex; flex-direction: column; }
 .row {
-  display: grid; grid-template-columns: minmax(0, 2.2fr) 110px 150px minmax(190px, auto);
-  align-items: center; gap: 16px; padding: 14px 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) 110px 150px minmax(180px, auto);
+  align-items: center;
+  gap: 16px;
+  padding: 14px 22px;
   border-bottom: 1px solid var(--border);
   transition: background .15s;
 }
@@ -812,15 +790,38 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 .row.members { grid-template-columns: minmax(0, 2fr) minmax(0, 1.6fr) 110px 140px; }
 .row.members .acts { justify-content: flex-end; }
 
-.who { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.who-info {
+  flex: 1;
+  min-width: 0;
+}
 .avatar {
-  width: 42px; height: 42px; border-radius: 50%; flex: none;
+  width: 40px; height: 40px; border-radius: 50%; flex: none;
   display: grid; place-items: center; font-weight: 700; font-size: 15px; color: #fff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2);
 }
-.who-name { font-weight: 600; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.who-meta { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.amt { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 15px; }
+.who-name {
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+.who-meta {
+  font-size: 12.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+.amt { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 15px; white-space: nowrap; }
 .status-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
 .paid-date { font-size: 11.5px; color: var(--muted); font-weight: 500; }
 .acts { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
@@ -980,7 +981,7 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 .footer { margin-top: 56px; background: var(--surface); border-top: 1px solid var(--border); }
 .footer-inner {
   display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
-  padding: 26px 0 calc(26px + env(safe-area-inset-bottom));
+  padding: 26px 0 calc(26px + env(safe-area-inset-bottom, 0px));
 }
 .footer-brand b { display: block; font-size: 14.5px; }
 .footer-brand span { font-size: 13px; color: var(--muted); }
@@ -990,8 +991,8 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 /* ---------- Toasts ---------- */
 .toasts {
   position: fixed;
-  right: max(20px, env(safe-area-inset-right));
-  bottom: calc(20px + env(safe-area-inset-bottom));
+  right: max(20px, env(safe-area-inset-right, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   z-index: 400;
   display: flex;
   flex-direction: column;
@@ -1057,16 +1058,18 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   background: color-mix(in srgb, var(--accent) 20%, white);
 }
 .lang-pill {
-  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   padding: 7px 12px; border-radius: var(--r-pill);
   font-size: 12.5px; font-weight: 700;
   border: 1px solid var(--border-strong); background: var(--surface);
   color: var(--text); transition: transform .2s var(--spring), border-color .15s, background .15s; cursor: pointer;
   line-height: 1; white-space: nowrap;
 }
+.lang-pill .ic { width: 14px; height: 14px; color: var(--text-2); }
 .lang-pill:hover {
   border-color: var(--accent); background: var(--surface-2); box-shadow: var(--shadow-xs); color: var(--accent);
 }
+.lang-pill:hover .ic { color: var(--accent); }
 .lang-pill:active { transform: scale(.94); }
 
 .banner-locked {
@@ -1102,22 +1105,65 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   .bento-vibe-card { grid-column: span 6; }
 }
 
-/* Tablet portrait and below */
+/* Tablet portrait and mobile: stack list rows cleanly so names NEVER truncate */
 @media (max-width: 860px) {
   .row.head { display: none; }
+
   .row, .row.members {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: 'who amt' 'status acts';
-    gap: 10px 12px; padding: 14px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    padding: 15px 16px;
   }
-  .row > :nth-child(1) { grid-area: who; }
-  .row > :nth-child(2) { grid-area: amt; text-align: right; }
-  .row > :nth-child(3) { grid-area: status; flex-direction: row; align-items: center; gap: 8px; }
-  .row > :nth-child(4) { grid-area: acts; }
-  .row.members { grid-template-areas: 'who amt' 'meta acts'; }
-  .row.members > :nth-child(2) { grid-area: meta; text-align: left; }
-  .row.members > :nth-child(3) { grid-area: amt; text-align: right; }
-  .row.members > :nth-child(4) { grid-area: acts; }
+
+  /* Line 1: Member Avatar + Full Name (flex: 1) on left, Price on right */
+  .row > .who {
+    flex: 1 1 calc(100% - 95px);
+    min-width: 0;
+  }
+  .row > .amt {
+    flex: 0 0 auto;
+    margin-left: auto;
+    text-align: right;
+    font-size: 15.5px;
+  }
+
+  /* Line 2: Status badge on left, compact action buttons on right */
+  .row > .status-cell {
+    flex: 1 1 auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .row > .acts {
+    flex: 0 0 auto;
+    margin-left: auto;
+    gap: 6px;
+  }
+
+  /* Members tab row layout */
+  .row.members > .who {
+    flex: 1 1 calc(100% - 95px);
+    min-width: 0;
+  }
+  .row.members > :nth-child(2) {
+    order: 3;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .row.members > .amt {
+    order: 2;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+  .row.members > .acts {
+    order: 4;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+
   .hub-grid { grid-template-columns: 1fr; }
   .field-row { grid-template-columns: 1fr 1fr; }
 }
@@ -1125,13 +1171,21 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 /* Large phones / small tablets */
 @media (max-width: 760px) {
   .container {
-    padding-left: max(16px, env(safe-area-inset-left));
-    padding-right: max(16px, env(safe-area-inset-right));
+    padding-left: max(18px, env(safe-area-inset-left, 0px));
+    padding-right: max(18px, env(safe-area-inset-right, 0px));
   }
-  .topbar-inner { height: auto; min-height: 60px; padding: 8px 0; flex-wrap: wrap; row-gap: 8px; }
+  .topbar {
+    padding-top: max(env(safe-area-inset-top, 0px), 16px);
+    padding-bottom: 10px;
+  }
+  .topbar > .container {
+    padding-left: max(18px, env(safe-area-inset-left, 0px));
+    padding-right: max(18px, env(safe-area-inset-right, 0px));
+  }
+  .topbar-inner { height: auto; min-height: 46px; flex-wrap: wrap; row-gap: 8px; }
   .topbar-actions { margin-left: auto; }
   .site-switch span, .hub-back span { display: none; }
-  .site-switch, .hub-back { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 12px; }
+  .site-switch, .hub-back { width: 40px; height: 40px; padding: 0; justify-content: center; border-radius: 11px; }
   .topbar-div { display: none; }
   .hero { padding: 26px 0 74px; }
   .hero-inner { gap: 20px; }
@@ -1159,9 +1213,11 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
 @media (max-width: 560px) {
   .topbar-actions { gap: 6px; }
   [data-action="open-contact"] span { display: none; }
-  [data-action="open-contact"] { width: 44px; height: 44px; padding: 0; border-radius: 12px; }
-  .host-pill { min-height: 44px; padding: 0 12px; font-size: 12.5px; }
-  .lang-pill { min-height: 44px; padding: 0 12px; }
+  [data-action="open-contact"] { width: 40px; height: 40px; padding: 0; border-radius: 11px; }
+  .host-pill { min-height: 40px; padding: 0 11px; font-size: 12px; }
+  .lang-pill { min-height: 40px; padding: 0 10px; font-size: 12px; }
+  .topbar-actions .icon-btn { width: 40px; height: 40px; min-width: 40px; min-height: 40px; }
+
   .field-row { grid-template-columns: 1fr; }
   .kpis { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: -44px; }
   .kpi { padding: 14px; border-radius: 18px; }
@@ -1176,18 +1232,43 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   .segmented button { justify-content: center; min-height: 40px; }
   .toolbar-right .btn { flex: 1; }
 
-  /* Bento mobile layout refinements */
+  /* Compact row action buttons on mobile so row stays balanced */
+  .row .acts .btn-sm {
+    padding: 7px 11px;
+    font-size: 12.5px;
+    min-height: 36px;
+    border-radius: 9px;
+  }
+  .row .acts .icon-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: 9px;
+  }
+
+  /* Bento mobile layout refinements — full status visibility */
   .bento-grid { gap: 12px; }
-  .bento-card { padding: 18px; border-radius: 22px; }
-  .bento-profile-top { flex-direction: row; align-items: center; gap: 14px; }
-  .bento-photo-frame { width: 78px; height: 78px; border-radius: 22px; }
-  .bento-photo { border-radius: 19px; }
-  .bento-name { font-size: 20px; }
-  .status-live-pill { font-size: 12px; padding: 6px 11px; min-height: 38px; }
-  .sticker-pill { min-height: 44px; padding: 9px 14px; font-size: 13px; flex: 1 1 auto; justify-content: center; }
+  .bento-card { padding: 18px; border-radius: 20px; }
+  .bento-profile-top {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .bento-photo-frame { width: 72px; height: 72px; border-radius: 18px; }
+  .bento-photo { border-radius: 16px; }
+  .bento-name { font-size: 19.5px; }
+  .status-live-pill {
+    font-size: 12px;
+    padding: 5px 10px;
+    min-height: 32px;
+    white-space: normal;
+  }
+  .sticker-pill { min-height: 42px; padding: 8px 12px; font-size: 12.5px; flex: 1 1 auto; justify-content: center; }
   .bento-vibe-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .bento-vibe-actions .copy-btn { grid-column: span 2; }
-  .bento-btn { min-height: 44px; width: 100%; }
+  .bento-btn { min-height: 42px; width: 100%; }
 
   .site-card { padding: 20px; border-radius: 22px; }
   .site-stats { gap: 8px; }
@@ -1195,9 +1276,9 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   .site-stat .v { font-size: 16.5px; }
 
   .toast-wrap, .toasts {
-    left: max(12px, env(safe-area-inset-left));
-    right: max(12px, env(safe-area-inset-right));
-    bottom: calc(14px + env(safe-area-inset-bottom));
+    left: max(12px, env(safe-area-inset-left, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   }
   .toast { width: 100%; }
 
@@ -1213,24 +1294,21 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; }
   }
   .modal-head { padding-top: 12px; }
   .modal-head, .modal-body, .modal-foot { padding-left: 18px; padding-right: 18px; }
-  .modal-foot { border-radius: 0; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+  .modal-foot { border-radius: 0; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
   .modal-foot .btn { flex: 1; min-height: 46px; }
   .contact-ic { width: 40px; height: 40px; }
 }
 @keyframes sheet { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
 
-/* Touch devices: enforce minimum 44x44px comfortable tap targets */
+/* Touch devices: comfortable tap targets */
 @media (pointer: coarse) {
-  .icon-btn { min-width: 44px; min-height: 44px; }
-  .month-nav .icon-btn { min-width: 44px; min-height: 44px; }
-  .btn { min-height: 44px; }
-  .btn-sm { min-height: 44px; padding: 9px 14px; }
-  .segmented button { min-height: 44px; padding: 9px 12px; }
-  .tab { min-height: 48px; padding: 12px 16px; }
+  .month-nav .icon-btn { min-width: 40px; min-height: 40px; }
+  .btn { min-height: 42px; }
+  .segmented button { min-height: 40px; padding: 8px 12px; }
+  .tab { min-height: 46px; padding: 12px 16px; }
   .search { min-height: 44px; }
-  .status-live-pill { min-height: 44px; }
-  .sticker-pill { min-height: 44px; }
-  .bento-btn { min-height: 44px; }
+  .sticker-pill { min-height: 42px; }
+  .bento-btn { min-height: 42px; }
   .switch { width: 50px; height: 30px; }
   .switch span::after { width: 24px; height: 24px; }
   .switch input:checked + span::after { transform: translateX(20px); }

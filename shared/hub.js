@@ -145,11 +145,11 @@
           </a>
           <div class="topbar-spacer"></div>
           <div class="topbar-actions">
-            <a class="site-switch" href="#aboutMeSection">${icon('sparkles', 'sm')}<span>${esc(t('tabAbout'))}</span></a>
+            <a class="site-switch" href="#aboutMeSection">${icon('user', 'sm')}<span>${esc(t('tabAbout'))}</span></a>
             <a class="site-switch" href="youtube/index.html">${icon('play', 'sm')}<span>YouTube</span></a>
             <a class="site-switch" href="apple/index.html">${icon('cloud', 'sm')}<span>Apple One</span></a>
             <button class="lang-pill" data-action="toggle-lang" title="${esc(t('langTitle'))}" aria-label="${esc(t('langTitle'))}">
-              <span>${esc(t('langBtn'))}</span>
+              ${icon('globe', 'sm')}<span>${esc(t('langBtn'))}</span>
             </button>
           </div>
         </div>

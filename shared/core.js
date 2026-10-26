@@ -1,6 +1,6 @@
 /**
  * subm8 — shared core
- * Icons, formatting helpers, i18n, interactive "About Me" Bento widget,
+ * Icons, formatting helpers, i18n, minimalist "About Me" Bento widget,
  * and the host profile (contact + payment info) shared across all sites.
  */
 (function (global) {
@@ -46,7 +46,17 @@
     unlock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
     crown: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
     sparkles: '<path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/>',
-    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'
+    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    globe: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+    cpu: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>',
+    code: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+    music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+    coffee: '<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>',
+    layers: '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+    terminal: '<polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>',
+    graduation: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+    refresh: '<polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>',
+    activity: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'
   };
 
   function icon(name, cls) {
@@ -79,7 +89,7 @@
 
   const I18N = {
     th: {
-      langBtn: '🇹🇭 TH',
+      langBtn: 'TH',
       langTitle: 'เปลี่ยนเป็นภาษาอังกฤษ / Switch to English',
       brandSub: 'ระบบจัดการแชร์สตรีมมิ่ง & แฟมิลี่',
       allFamilies: 'หน้าหลักรวมแฟมิลี่',
@@ -102,7 +112,7 @@
       collectedSub: 'จ่ายแล้ว {paid} จาก {n} คน',
       outstanding: 'ยอดค้างชำระ',
       outstandingSub: 'รอโอนอีก {unpaid} คน',
-      allSettledSub: 'เก็บครบเรียบร้อยแล้ว 🎉',
+      allSettledSub: 'เก็บครบเรียบร้อยแล้ว',
       planCostLabel: 'ค่าบริการรายเดือน',
       billedOnDay: 'ตัดรอบบิลทุกวันที่ {day} ของเดือน',
       netCost: 'ส่วนต่างที่โฮสต์ออก',
@@ -137,7 +147,7 @@
       unpaid: 'รอชำระ',
       paidOn: 'เมื่อ {date}',
       undo: 'ยกเลิก',
-      markPaid: 'บันทึกว่าจ่ายแล้ว',
+      markPaid: 'จ่ายแล้ว',
       payNow: 'สแกนจ่าย',
       invoice: 'ใบแจ้งยอด',
       copyReminder: 'คัดลอกข้อความแจ้งยอด',
@@ -257,29 +267,28 @@
       hubTotalOutstanding: 'รอเก็บเพิ่มเดือนนี้',
       hubPaidProgress: 'จ่ายแล้ว {paid}/{n} คน',
       paymentChannelsTitle: 'ช่องทางโอนเงินของโฮสต์',
-      // About Me Bento translations
-      aboutSectionEyebrow: '✨ ABOUT THE HOST · โฮสต์ผู้ดูแลแฟมิลี่',
+      // About Me Bento translations (Minimalist, no emojis)
+      aboutSectionEyebrow: 'ABOUT THE HOST · ผู้ดูแลระบบ',
       aboutRoleBadge: 'AI Tech Undergrad & Creator',
-      aboutBio: 'นักศึกษาสาย AI ที่ชอบสร้างเว็บและเครื่องมือเจ๋งๆ ดูแลระบบหารค่าสตรีมมิ่งให้ทุกคนในตี้ใช้งานได้แบบชิลๆ 🎧✨',
-      aboutTapStatusHint: 'แตะเพื่อเปลี่ยนสถานะ',
-      aboutAgeLabel: 'อายุ (AGE)',
+      aboutBio: 'นักศึกษาสาย Artificial Intelligence ที่ชอบพัฒนาเว็บแอปและเครื่องมือที่ใช้งานง่าย ดูแลระบบแชร์สตรีมมิ่งให้ทุกคนในกลุ่มจัดการได้อย่างสะดวก',
+      aboutTapStatusHint: 'แตะเพื่อสลับสถานะ',
+      aboutAgeLabel: 'AGE & BIRTHDAY',
       aboutYearsOld: '20 ปี',
-      aboutBirthdayLabel: 'วันเกิด (BIRTHDAY)',
-      aboutBirthdayVal: '23 กุมภาพันธ์ 2006',
-      aboutEducationLabel: 'การศึกษา (EDUCATION)',
+      aboutBirthdayVal: '23 February 2006',
+      aboutEducationLabel: 'EDUCATION',
       aboutMajor: 'Artificial Intelligence Technology (AIT)',
-      aboutUni: 'สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง (KMITL)',
-      aboutStickersLabel: 'INTERESTS & VIBES · แตะสติกเกอร์เล่นได้!',
-      aboutVibeCardLabel: 'DAILY VIBE & MOOD',
-      aboutShuffleBtn: '🎲 สุ่มโควทใหม่',
-      aboutBeatBtnOn: '🎵 Vibe Mode: ON',
-      aboutBeatBtnOff: '🎧 Vibe Mode: Chill',
-      aboutCopyProfileBtn: 'คัดลอกชื่อ & ข้อมูลโฮสต์',
-      aboutCopiedBtn: 'คัดลอกเรียบร้อย! ✨',
+      aboutUni: "King Mongkut's Institute of Technology Ladkrabang (KMITL)",
+      aboutStickersLabel: 'INTERESTS & FOCUS',
+      aboutVibeCardLabel: 'NOTES & STATUS',
+      aboutShuffleBtn: 'เปลี่ยนโควท',
+      aboutBeatBtnOn: 'Ambient: On',
+      aboutBeatBtnOff: 'Ambient: Off',
+      aboutCopyProfileBtn: 'คัดลอกข้อมูลโฮสต์',
+      aboutCopiedBtn: 'คัดลอกแล้ว',
       aboutPhotoHint: 'วางไฟล์รูปที่ ./assets/profile.jpg'
     },
     en: {
-      langBtn: '🇬🇧 EN',
+      langBtn: 'EN',
       langTitle: 'สลับเป็นภาษาไทย / Switch to Thai',
       brandSub: 'Family subscription manager',
       allFamilies: 'All family groups',
@@ -302,7 +311,7 @@
       collectedSub: '{paid} of {n} members paid',
       outstanding: 'Outstanding',
       outstandingSub: '{unpaid} member{s} remaining',
-      allSettledSub: 'Everyone is settled up 🎉',
+      allSettledSub: 'Everyone is settled up',
       planCostLabel: 'Plan cost',
       billedOnDay: 'Billed on day {day} each month',
       netCost: 'Host net share',
@@ -457,25 +466,24 @@
       hubTotalOutstanding: 'Remaining this month',
       hubPaidProgress: '{paid}/{n} paid',
       paymentChannelsTitle: 'Host payment channels',
-      // About Me Bento translations
-      aboutSectionEyebrow: '✨ ABOUT THE HOST · MEET THE CREATOR',
+      // About Me Bento translations (Minimalist, no emojis)
+      aboutSectionEyebrow: 'ABOUT THE HOST · CREATOR PROFILE',
       aboutRoleBadge: 'AI Tech Undergrad & Builder',
-      aboutBio: 'AI student building clean web tools, exploring machine learning, and keeping our shared subscriptions running smoothly 🎧✨',
+      aboutBio: 'AI technology undergraduate building clean web tools, exploring machine learning, and keeping our shared subscriptions running smoothly.',
       aboutTapStatusHint: 'Tap to switch status',
-      aboutAgeLabel: 'AGE',
+      aboutAgeLabel: 'AGE & BIRTHDAY',
       aboutYearsOld: '20 years old',
-      aboutBirthdayLabel: 'BIRTHDAY',
       aboutBirthdayVal: '23 February 2006',
       aboutEducationLabel: 'EDUCATION',
       aboutMajor: 'Artificial Intelligence Technology (AIT)',
       aboutUni: "King Mongkut's Institute of Technology Ladkrabang (KMITL)",
-      aboutStickersLabel: 'INTERESTS & VIBES · TAP A STICKER!',
-      aboutVibeCardLabel: 'DAILY VIBE & MOOD',
-      aboutShuffleBtn: '🎲 Shuffle Quote',
-      aboutBeatBtnOn: '🎵 Vibe Mode: ON',
-      aboutBeatBtnOff: '🎧 Vibe Mode: Chill',
+      aboutStickersLabel: 'INTERESTS & FOCUS',
+      aboutVibeCardLabel: 'NOTES & STATUS',
+      aboutShuffleBtn: 'Next Quote',
+      aboutBeatBtnOn: 'Ambient: On',
+      aboutBeatBtnOff: 'Ambient: Off',
       aboutCopyProfileBtn: 'Copy Host Card',
-      aboutCopiedBtn: 'Copied! ✨',
+      aboutCopiedBtn: 'Copied',
       aboutPhotoHint: 'Drop photo at ./assets/profile.jpg'
     }
   };
@@ -553,12 +561,12 @@
     'Amount / ยอดชำระ: {amount} THB (due day {due})\n' +
     'PromptPay: {promptpay}\n' +
     'Bank: {bank} {account}\n\n' +
-    'Please send the slip after transfer. Thank you! 🙏';
+    'Please send the slip after transfer. Thank you.';
 
   const DEFAULT_HOST = {
     name: 'Natthaset Attharungroj',
     title: 'AIT @ KMITL · Family Plan Host',
-    hours: 'Usually replies fast · ทักแชทได้ตลอดครับ',
+    hours: 'Usually replies within a few hours',
     line: '',
     phone: '',
     email: '',
@@ -675,36 +683,36 @@
     }
   }
 
-  // ---- Interactive "About Me" Bento State & Component ---------------------
+  // ---- Minimalist "About Me" Bento State & Component ----------------------
   const ABOUT_STATUSES = [
-    '🟢 Vibing & building cool projects',
-    '🧠 Training AI models @ KMITL',
-    '☕ Powered by iced americano & lo-fi beats',
-    '⚡ Shipping clean UI & late-night code',
-    '🎮 AFK touching grass (jk still coding)'
+    'Vibing & building cool projects',
+    'Studying AI Technology @ KMITL',
+    'Powered by iced coffee & lo-fi beats',
+    'Shipping clean UI & side projects',
+    'Exploring deep learning & web craft'
   ];
 
   const ABOUT_QUOTES = [
-    { text: '"Code is like humor. When you have to explain it, it’s bad — keep it chill & clean."', tag: '✨ Current Mood' },
-    { text: '"Studying Artificial Intelligence so the robots remember I was nice to them 🤖"', tag: '🧠 AIT @ KMITL' },
-    { text: '"Good coffee, lo-fi playlists, and zero merge conflicts — peak 20-year-old peace."', tag: '☕ Daily Fuel' },
-    { text: '" Turning neural nets and midnight ideas into real-world side projects."', tag: '🚀 Builder Era' }
+    { text: '"Simplicity is about subtracting the obvious and adding the meaningful."', tag: 'Design Philosophy' },
+    { text: '"Building intelligent systems and clean interfaces that people enjoy using."', tag: 'AIT @ KMITL' },
+    { text: '"Good coffee, lo-fi playlists, and zero merge conflicts."', tag: 'Daily Routine' },
+    { text: '"Turning machine learning concepts and late-night ideas into practical tools."', tag: 'Current Focus' }
   ];
 
   const ABOUT_STICKERS = [
-    { id: 'ai', label: '🤖 AI & Code', reaction: '🤖 Building smart things with AI @ KMITL!' },
-    { id: 'music', label: '🎵 Music & Lo-Fi', reaction: '🎵 Lo-fi & indie playlists on repeat 🎧' },
-    { id: 'coffee', label: '☕ Iced Coffee', reaction: '☕ +100% coding speed unlocked!' },
-    { id: 'ui', label: '✨ UI/UX Craft', reaction: '✨ Smooth corners & bouncy transitions only!' },
-    { id: 'ml', label: '🧠 Deep Learning', reaction: '🧠 Neural networks & PyTorch vibes' },
-    { id: 'gaming', label: '🎮 Gaming', reaction: '🎮 Ready to queue after deployment!' }
+    { id: 'ai', icon: 'cpu', label: 'AI & Machine Learning', reaction: 'AI & Machine Learning — AIT @ KMITL' },
+    { id: 'code', icon: 'code', label: 'Web Engineering', reaction: 'Clean, modular frontend architecture' },
+    { id: 'ui', icon: 'layers', label: 'UI/UX Design', reaction: 'Minimalist interfaces & smooth motion' },
+    { id: 'music', icon: 'music', label: 'Music & Lo-Fi', reaction: 'Lo-fi & indie playlists on repeat' },
+    { id: 'coffee', icon: 'coffee', label: 'Coffee', reaction: 'Iced Americano daily routine' },
+    { id: 'term', icon: 'terminal', label: 'Automation', reaction: 'Building fast developer workflows' }
   ];
 
   const aboutState = {
     statusIdx: 0,
     quoteIdx: 0,
     vibeBeat: true,
-    activeStickers: { ai: true, coffee: true },
+    activeStickers: { ai: true, code: true },
     copiedProfile: false
   };
 
@@ -717,6 +725,7 @@
     const stickersHtml = ABOUT_STICKERS.map((s) => {
       const active = !!aboutState.activeStickers[s.id];
       return `<button type="button" class="sticker-pill ${active ? 'active' : ''}" data-about-action="sticker" data-sticker-id="${s.id}">
+        ${icon(s.icon, 'sm')}
         <span>${esc(s.label)}</span>
       </button>`;
     }).join('');
@@ -724,7 +733,7 @@
     return `
     <section class="about-bento-wrap ${aboutState.vibeBeat ? 'vibe-glow' : ''}" id="aboutMeSection" aria-label="About Natthaset Attharungroj">
       <div class="about-section-head">
-        <span class="about-eyebrow">${esc(t('aboutSectionEyebrow'))}</span>
+        <span class="about-eyebrow">${icon('user', 'sm')}<span>${esc(t('aboutSectionEyebrow'))}</span></span>
       </div>
 
       <div class="bento-grid">
@@ -739,7 +748,6 @@
                 class="bento-photo"
                 loading="lazy"
               >
-              <span class="bento-photo-badge" aria-hidden="true">✨</span>
             </div>
             <div class="bento-profile-info">
               <button type="button" class="status-live-pill" data-about-action="cycle-status" title="${esc(t('aboutTapStatusHint'))}">
@@ -748,7 +756,7 @@
               </button>
               <h2 class="bento-name">Natthaset Attharungroj</h2>
               <div class="bento-role-row">
-                <span class="bento-tag-chip">🎓 AIT @ KMITL</span>
+                <span class="bento-tag-chip">${icon('graduation', 'sm')}<span>AIT @ KMITL</span></span>
                 <span class="bento-tag-chip soft">${esc(t('aboutRoleBadge'))}</span>
               </div>
             </div>
@@ -759,47 +767,47 @@
         <!-- 2. Age & Birthday Card -->
         <div class="bento-card bento-stat-card">
           <div class="bento-card-head">
-            <span class="bento-kicker">🎂 ${esc(t('aboutAgeLabel'))} &amp; ${esc(t('aboutBirthdayLabel'))}</span>
-            <span class="bento-mini-badge">Gen Z &rsquo;06</span>
+            <span class="bento-kicker">${icon('calendar', 'sm')}<span>${esc(t('aboutAgeLabel'))}</span></span>
+            <span class="bento-mini-badge">2006</span>
           </div>
           <div class="bento-age-row">
             <div class="bento-big-num">20</div>
             <div class="bento-age-meta">
               <b>${esc(t('aboutYearsOld'))}</b>
-              <span>Born ${esc(t('aboutBirthdayVal'))}</span>
+              <span>${esc(t('aboutBirthdayVal'))}</span>
             </div>
           </div>
-          <div class="bento-sub-pill">♓ Pisces · 23 Feb 2006</div>
+          <div class="bento-sub-pill">23 Feb 2006 · Bangkok, TH</div>
         </div>
 
         <!-- 3. Education Card (AIT @ KMITL) -->
         <div class="bento-card bento-edu-card">
           <div class="bento-card-head">
-            <span class="bento-kicker">🏛️ ${esc(t('aboutEducationLabel'))}</span>
+            <span class="bento-kicker">${icon('graduation', 'sm')}<span>${esc(t('aboutEducationLabel'))}</span></span>
             <span class="bento-mini-badge neon">KMITL</span>
           </div>
           <div class="bento-edu-title">${esc(t('aboutMajor'))}</div>
           <div class="bento-edu-sub">${esc(t('aboutUni'))}</div>
           <div class="bento-edu-tags">
-            <span>🤖 Artificial Intelligence</span>
-            <span>💻 Computer Science</span>
+            <span>Artificial Intelligence</span>
+            <span>Computer Science</span>
           </div>
         </div>
 
-        <!-- 4. Interactive Stickers / Interests Card -->
+        <!-- 4. Interactive Skill / Interest Tags Card -->
         <div class="bento-card bento-stickers-card">
           <div class="bento-card-head">
-            <span class="bento-kicker">${esc(t('aboutStickersLabel'))}</span>
+            <span class="bento-kicker">${icon('layers', 'sm')}<span>${esc(t('aboutStickersLabel'))}</span></span>
           </div>
           <div class="sticker-cloud">
             ${stickersHtml}
           </div>
         </div>
 
-        <!-- 5. Interactive Quote + Vibe Equalizer Card -->
+        <!-- 5. Interactive Quote + Equalizer Card -->
         <div class="bento-card bento-vibe-card">
           <div class="bento-card-head">
-            <span class="bento-kicker">🎧 ${esc(t('aboutVibeCardLabel'))}</span>
+            <span class="bento-kicker">${icon('activity', 'sm')}<span>${esc(t('aboutVibeCardLabel'))}</span></span>
             <div class="eq-bars ${aboutState.vibeBeat ? 'playing' : ''}" aria-hidden="true">
               <span></span><span></span><span></span><span></span>
             </div>
@@ -810,13 +818,15 @@
           </blockquote>
           <div class="bento-vibe-actions">
             <button type="button" class="bento-btn" data-about-action="shuffle-quote">
+              ${icon('refresh', 'sm')}
               <span>${esc(t('aboutShuffleBtn'))}</span>
             </button>
             <button type="button" class="bento-btn ${aboutState.vibeBeat ? 'active' : ''}" data-about-action="toggle-beat">
+              ${icon('activity', 'sm')}
               <span>${esc(aboutState.vibeBeat ? t('aboutBeatBtnOn') : t('aboutBeatBtnOff'))}</span>
             </button>
             <button type="button" class="bento-btn copy-btn ${aboutState.copiedProfile ? 'copied' : ''}" data-about-action="copy-profile">
-              ${icon('check', 'sm')}
+              ${icon(aboutState.copiedProfile ? 'check' : 'copy', 'sm')}
               <span>${esc(aboutState.copiedProfile ? t('aboutCopiedBtn') : t('aboutCopyProfileBtn'))}</span>
             </button>
           </div>
@@ -841,7 +851,6 @@
         void btn.offsetWidth;
         btn.classList.add('pop-anim');
       }
-      toast(txt);
       return true;
     }
 
@@ -877,7 +886,7 @@
       const eq = wrap ? wrap.querySelector('.eq-bars') : null;
       if (eq) eq.classList.toggle('playing', aboutState.vibeBeat);
       btn.classList.toggle('active', aboutState.vibeBeat);
-      btn.innerHTML = `<span>${esc(aboutState.vibeBeat ? t('aboutBeatBtnOn') : t('aboutBeatBtnOff'))}</span>`;
+      btn.innerHTML = `${icon('activity', 'sm')}<span>${esc(aboutState.vibeBeat ? t('aboutBeatBtnOn') : t('aboutBeatBtnOff'))}</span>`;
       return true;
     }
 
@@ -894,12 +903,11 @@
       aboutState.copiedProfile = true;
       copyText(info, t('aboutCopiedBtn'));
       btn.classList.add('copied');
-      const sp = btn.querySelector('span');
-      if (sp) sp.textContent = t('aboutCopiedBtn');
+      btn.innerHTML = `${icon('check', 'sm')}<span>${esc(t('aboutCopiedBtn'))}</span>`;
       setTimeout(() => {
         aboutState.copiedProfile = false;
         btn.classList.remove('copied');
-        if (sp) sp.textContent = t('aboutCopyProfileBtn');
+        btn.innerHTML = `${icon('copy', 'sm')}<span>${esc(t('aboutCopyProfileBtn'))}</span>`;
       }, 2200);
       return true;
     }

@@ -106,7 +106,7 @@
         <div class="topbar-spacer"></div>
         <div class="topbar-actions">
           <button class="lang-pill" data-action="toggle-lang" title="${esc(t('langTitle'))}" aria-label="${esc(t('langTitle'))}">
-            <span>${esc(t('langBtn'))}</span>
+            ${icon('globe', 'sm')}<span>${esc(t('langBtn'))}</span>
           </button>
           <a class="site-switch" href="${esc(CFG.switchTo.href)}" title="${esc(CFG.switchTo.label)}">
             ${icon(CFG.switchTo.icon, 'sm')}<span>${esc(CFG.switchTo.label)}</span>
@@ -176,7 +176,7 @@
       ${tabBtn('payments', 'wallet', t('tabPayments'), null)}
       ${tabBtn('members', 'users', t('tabMembers'), site.members.length)}
       ${tabBtn('plan', 'sliders', t('tabPlan'), null)}
-      ${tabBtn('about', 'sparkles', t('tabAbout'), null)}
+      ${tabBtn('about', 'user', t('tabAbout'), null)}
     </nav>`;
   }
 
@@ -211,7 +211,7 @@
       <div class="row ${paid ? 'is-paid' : ''}">
         <div class="who">
           ${avatar(m.name)}
-          <div style="min-width:0">
+          <div class="who-info">
             <div class="who-name">${esc(m.name)}</div>
             <div class="who-meta">${esc(m.contact || m.note || t('familyMemberDefault'))}</div>
           </div>
@@ -302,7 +302,7 @@
       ? `<div class="row head members"><div>${esc(t('member'))}</div><div>${esc(t('contactChannels'))}</div><div>${esc(t('perMember'))}</div><div style="text-align:right">${esc(t('actions'))}</div></div>` +
         site.members.map((m) => `
         <div class="row members">
-          <div class="who">${avatar(m.name)}<div style="min-width:0"><div class="who-name">${esc(m.name)}</div><div class="who-meta">${esc(m.note || t('familyMemberDefault'))}</div></div></div>
+          <div class="who">${avatar(m.name)}<div class="who-info"><div class="who-name">${esc(m.name)}</div><div class="who-meta">${esc(m.note || t('familyMemberDefault'))}</div></div></div>
           <div class="who-meta">${esc(m.contact || '—')}</div>
           <div class="amt">${fmt(pp)}</div>
           <div class="acts">
@@ -724,11 +724,11 @@
     if (!pending.length) return null;
     const pp = perMember();
     const lines = pending.map((m, i) => (i + 1) + '. ' + m.name + ' — ' + fmt(pp)).join('\n');
-    return '📢 ' + site.plan.name + ' · ' + monthLabel(ui.month) + '\n\n' + t('filterPending') + ' (' + pending.length + '):\n' + lines +
+    return site.plan.name + ' · ' + monthLabel(ui.month) + '\n\n' + t('filterPending') + ' (' + pending.length + '):\n' + lines +
       '\n\n' + t('outstanding') + ': ' + fmt(pp * pending.length) +
       (host.promptPay ? '\nPromptPay: ' + host.promptPay : '') +
       (host.bankAccount ? '\n' + (host.bankName || 'Bank') + ': ' + host.bankAccount : '') +
-      '\n\nThank you! 🙏';
+      '\n\nThank you.';
   }
 
   // ------------------------------------------------------------------------
