@@ -7,7 +7,7 @@
 
   const SM = window.SM;
   const CFG = window.SITE_CONFIG;
-  const { icon, esc, fmt, ymNow, monthLabel, shiftMonth, avatar, toast, copyText, t, getLang, toggleLang } = SM;
+  const { icon, esc, fmt, ymNow, monthLabel, fmtDate, shiftMonth, avatar, toast, copyText, t, getLang } = SM;
 
   const SITE_KEY = 'submate.site.v2.' + CFG.id;
   const clone = (o) => JSON.parse(JSON.stringify(o));
@@ -51,8 +51,13 @@
     return n > 0 ? plan.totalCost / n : plan.totalCost;
   }
 
+  function payRecord(month, id) {
+    return (site.payments[month] && site.payments[month][id]) || null;
+  }
+
   function isPaid(month, id) {
-    return !!(site.payments[month] && site.payments[month][id] && site.payments[month][id].paid);
+    const r = payRecord(month, id);
+    return !!(r && r.paid);
   }
 
   function setPaid(month, id, value) {
@@ -85,25 +90,31 @@
     return `
     <header class="topbar">
       <div class="container topbar-inner">
-        <a class="brand" href="${esc(CFG.hubHref)}" aria-label="${esc(t('allFamilies'))}">
-          <span class="brand-logo">${icon(CFG.logoIcon)}</span>
-          <span>
-            <span class="brand-name" style="display:block">${esc(CFG.short)}</span>
-            <span class="brand-sub" style="display:block">${esc(t('brandSub'))}</span>
-          </span>
-        </a>
+        <div class="brand-group">
+          <a class="hub-back" href="${esc(CFG.hubHref)}" title="${esc(t('allFamilies'))}" aria-label="${esc(t('allFamilies'))}">
+            ${icon('home', 'sm')}<span>${esc(t('backToHub'))}</span>
+          </a>
+          <span class="topbar-div" aria-hidden="true"></span>
+          <a class="brand" href="${esc(CFG.hubHref)}">
+            <span class="brand-logo">${icon(CFG.logoIcon)}</span>
+            <span>
+              <span class="brand-name" style="display:block">${esc(CFG.short)}</span>
+              <span class="brand-sub" style="display:block">${esc(t('brandSub'))}</span>
+            </span>
+          </a>
+        </div>
         <div class="topbar-spacer"></div>
         <div class="topbar-actions">
           <button class="lang-pill" data-action="toggle-lang" title="${esc(t('langTitle'))}" aria-label="${esc(t('langTitle'))}">
             <span>${esc(t('langBtn'))}</span>
           </button>
-          <a class="site-switch" href="${esc(CFG.switchTo.href)}" title="Switch to ${esc(CFG.switchTo.label)}">
+          <a class="site-switch" href="${esc(CFG.switchTo.href)}" title="${esc(CFG.switchTo.label)}">
             ${icon(CFG.switchTo.icon, 'sm')}<span>${esc(CFG.switchTo.label)}</span>
           </a>
           ${unlocked
-            ? `<button class="btn btn-soft btn-sm host-pill unlocked" data-action="host-lock" title="${esc(t('hostMode'))} · ${esc(t('hostLock'))}">${icon('crown', 'sm')}<span>${esc(t('hostMode'))}</span>${icon('lock', 'sm')}</button>`
+            ? `<button class="btn btn-soft btn-sm host-pill unlocked" data-action="host-lock" title="${esc(t('hostMode'))} · ${esc(t('hostLock'))}">${icon('crown', 'sm')}<span>${esc(t('hostMode'))}</span></button>`
             : `<button class="btn btn-ghost btn-sm host-pill" data-action="host-login" title="${esc(t('hostLogin'))}">${icon('lock', 'sm')}<span>${esc(t('hostLogin'))}</span></button>`}
-          <button class="btn btn-primary" data-action="open-contact">${icon('message', 'sm')}<span>${esc(t('contactHost'))}</span></button>
+          <button class="btn btn-primary btn-sm" data-action="open-contact">${icon('message', 'sm')}<span>${esc(t('contactHost'))}</span></button>
           <button class="icon-btn" data-action="open-host" title="${esc(t('hostSettings'))}" aria-label="${esc(t('hostSettings'))}">${icon('settings')}</button>
           <button class="icon-btn" data-action="open-backup" title="${esc(t('backupRestore'))}" aria-label="${esc(t('backupRestore'))}">${icon('download')}</button>
         </div>
@@ -114,17 +125,18 @@
   function hero(st) {
     const R = 42, C = 2 * Math.PI * R, dash = (C * st.pct) / 100;
     const paidLabel = t('paidCount', { paid: st.paid, n: st.n });
+    const tagline = (getLang() === 'th' && CFG.taglineTh) ? CFG.taglineTh : CFG.tagline;
     return `
     <section class="hero" aria-label="Overview">
       <div class="container hero-inner">
         <div>
           <span class="hero-eyebrow">${icon('calendar', 'sm')} ${esc(monthLabel(ui.month))}</span>
           <h1>${esc(CFG.brand)}</h1>
-          <p>${esc(CFG.tagline)}</p>
+          <p>${esc(tagline)}</p>
           <div class="hero-chips">
             <div class="hero-chip"><div class="k">${esc(t('planCost'))}</div><div class="v">${fmt(site.plan.totalCost)}<small style="font-size:12px;opacity:.7;font-weight:500">${esc(t('perMonth'))}</small></div></div>
             <div class="hero-chip"><div class="k">${esc(t('perMember'))}</div><div class="v">${fmt(st.pp)}</div></div>
-            <div class="hero-chip"><div class="k">${esc(t('dueDay'))}</div><div class="v">${esc(site.plan.billingDay)}</div></div>
+            <div class="hero-chip"><div class="k">${esc(t('dueDay'))}</div><div class="v">${esc(t('dueEveryMonth', { day: site.plan.billingDay }))}</div></div>
             <div class="hero-chip"><div class="k">${esc(t('seats'))}</div><div class="v">${site.members.length + (site.plan.hostShares ? 1 : 0)} / ${esc(site.plan.maxSlots)}</div></div>
           </div>
         </div>
@@ -139,12 +151,15 @@
   function kpis(st) {
     const netLabel = st.net < 0 ? t('surplus') : t('netCost');
     const netVal = Math.abs(st.net);
+    const outSub = st.unpaid === 0
+      ? t('allSettledSub')
+      : t('outstandingSub', { unpaid: st.unpaid, s: st.unpaid === 1 ? '' : 's' });
     return `
     <section class="kpis" aria-label="Key figures">
       <div class="kpi"><div class="kpi-top"><span class="kpi-label">${esc(t('collected'))}</span><span class="kpi-ic green">${icon('check', 'sm')}</span></div>
         <div class="kpi-value">${fmt(st.collected)}</div><div class="kpi-sub">${esc(t('collectedSub', { paid: st.paid, n: st.n }))}</div></div>
-      <div class="kpi"><div class="kpi-top"><span class="kpi-label">${esc(t('outstanding'))}</span><span class="kpi-ic amber">${icon('clock', 'sm')}</span></div>
-        <div class="kpi-value">${fmt(st.outstanding)}</div><div class="kpi-sub">${esc(t('outstandingSub', { unpaid: st.unpaid, s: st.unpaid === 1 ? '' : 's' }))}</div></div>
+      <div class="kpi"><div class="kpi-top"><span class="kpi-label">${esc(t('outstanding'))}</span><span class="kpi-ic ${st.unpaid === 0 ? 'green' : 'amber'}">${icon(st.unpaid === 0 ? 'check' : 'clock', 'sm')}</span></div>
+        <div class="kpi-value">${fmt(st.outstanding)}</div><div class="kpi-sub">${esc(outSub)}</div></div>
       <div class="kpi"><div class="kpi-top"><span class="kpi-label">${esc(t('planCostLabel'))}</span><span class="kpi-ic accent">${icon('wallet', 'sm')}</span></div>
         <div class="kpi-value">${fmt(st.total)}</div><div class="kpi-sub">${esc(t('billedOnDay', { day: site.plan.billingDay }))}</div></div>
       <div class="kpi"><div class="kpi-top"><span class="kpi-label">${esc(netLabel)}</span><span class="kpi-ic slate">${icon('shield', 'sm')}</span></div>
@@ -188,20 +203,32 @@
     const unlocked = SM.isHostUnlocked(host);
     const head = `<div class="row head"><div>${esc(t('member'))}</div><div>${esc(t('amount'))}</div><div>${esc(t('status'))}</div><div style="text-align:right">${esc(t('actions'))}</div></div>`;
     return head + list.map((m) => {
-      const paid = isPaid(ui.month, m.id);
+      const rec = payRecord(ui.month, m.id);
+      const paid = !!(rec && rec.paid);
+      const dateStr = paid && rec.paidAt ? fmtDate(rec.paidAt) : '';
       return `
-      <div class="row">
-        <div class="who">${avatar(m.name)}<div style="min-width:0"><div class="who-name">${esc(m.name)}</div><div class="who-meta">${esc(m.contact || m.note || t('noContactAdded'))}</div></div></div>
+      <div class="row ${paid ? 'is-paid' : ''}">
+        <div class="who">
+          ${avatar(m.name)}
+          <div style="min-width:0">
+            <div class="who-name">${esc(m.name)}</div>
+            <div class="who-meta">${esc(m.contact || m.note || t('familyMemberDefault'))}</div>
+          </div>
+        </div>
         <div class="amt">${fmt(pp)}</div>
-        <div><span class="badge ${paid ? 'paid' : 'pending'}">${esc(paid ? t('paid') : t('unpaid'))}</span></div>
+        <div class="status-cell">
+          <span class="badge ${paid ? 'paid' : 'pending'}">${esc(paid ? t('paid') : t('unpaid'))}</span>
+          ${dateStr ? `<span class="paid-date">${esc(t('paidOn', { date: dateStr }))}</span>` : ''}
+        </div>
         <div class="acts">
           ${unlocked
             ? (paid
                 ? `<button class="btn btn-ghost btn-sm" data-action="toggle-paid" data-id="${m.id}">${esc(t('undo'))}</button>`
-                : `<button class="btn btn-success btn-sm" data-action="toggle-paid" data-id="${m.id}">${icon('check', 'sm')}${esc(t('markPaid'))}</button>`)
-            : `<button class="btn btn-soft btn-sm" data-action="bill" data-id="${m.id}">${icon('qr', 'sm')}${esc(paid ? t('invoice') : t('payNow'))}</button>`}
-          <button class="icon-btn" data-action="bill" data-id="${m.id}" title="${esc(t('invoice'))} &amp; PromptPay QR" aria-label="${esc(t('invoice'))} ${esc(m.name)}">${icon('qr')}</button>
-          <button class="icon-btn" data-action="remind" data-id="${m.id}" title="${esc(t('copyReminder'))}" aria-label="${esc(t('copyReminder'))} ${esc(m.name)}">${icon('copy')}</button>
+                : `<button class="btn btn-success btn-sm" data-action="toggle-paid" data-id="${m.id}">${icon('check', 'sm')}<span>${esc(t('markPaid'))}</span></button>`) +
+              `<button class="icon-btn" data-action="bill" data-id="${m.id}" title="${esc(t('invoice'))} &amp; PromptPay QR" aria-label="${esc(t('invoice'))} ${esc(m.name)}">${icon('qr')}</button>` +
+              `<button class="icon-btn" data-action="remind" data-id="${m.id}" title="${esc(t('copyReminder'))}" aria-label="${esc(t('copyReminder'))} ${esc(m.name)}">${icon('copy')}</button>`
+            : `<button class="btn ${paid ? 'btn-secondary' : 'btn-primary'} btn-sm" data-action="bill" data-id="${m.id}">${icon('qr', 'sm')}<span>${esc(paid ? t('invoice') : t('payNow'))}</span></button>
+               <button class="icon-btn" data-action="remind" data-id="${m.id}" title="${esc(t('copyReminder'))}" aria-label="${esc(t('copyReminder'))} ${esc(m.name)}">${icon('copy')}</button>`}
         </div>
       </div>`;
     }).join('');
@@ -224,8 +251,9 @@
     return `<div class="history"><div class="history-title">${esc(t('historyTitle'))}</div><div class="history-bars">${bars.join('')}</div></div>`;
   }
 
-  function paymentsTab() {
+  function paymentsTab(st) {
     const unlocked = SM.isHostUnlocked(host);
+    const counts = { all: st.n, pending: st.unpaid, paid: st.paid };
     const filterLabels = { all: t('filterAll'), pending: t('filterPending'), paid: t('filterPaid') };
     return `
     <div class="panel ${ui.anim ? 'anim' : ''}">
@@ -246,12 +274,14 @@
           <label class="search">${icon('search', 'sm')}<input id="searchInput" type="search" placeholder="${esc(t('searchPlaceholder'))}" value="${esc(ui.query)}" aria-label="${esc(t('searchPlaceholder'))}"></label>
           <div class="segmented" role="group" aria-label="Filter">
             ${['all', 'pending', 'paid'].map((f) =>
-              `<button class="${ui.filter === f ? 'active' : ''}" data-action="filter" data-id="${f}">${esc(filterLabels[f])}</button>`).join('')}
+              `<button class="${ui.filter === f ? 'active' : ''}" data-action="filter" data-id="${f}">
+                 <span>${esc(filterLabels[f])}</span><span class="seg-count">${counts[f]}</span>
+               </button>`).join('')}
           </div>
         </div>
         <div class="toolbar-right">
-          <button class="btn btn-secondary btn-sm" data-action="copy-pending">${icon('bell', 'sm')}${esc(t('copyPending'))}</button>
-          ${unlocked ? `<button class="btn btn-secondary btn-sm" data-action="mark-all">${icon('check', 'sm')}${esc(t('markAllPaid'))}</button>` : ''}
+          <button class="btn btn-secondary btn-sm" data-action="copy-pending">${icon('bell', 'sm')}<span>${esc(t('copyPending'))}</span></button>
+          ${unlocked && st.unpaid > 0 ? `<button class="btn btn-secondary btn-sm" data-action="mark-all">${icon('check', 'sm')}<span>${esc(t('markAllPaid'))}</span></button>` : ''}
         </div>
       </div>
       <div class="rows" id="payRows">${payRows()}</div>
@@ -275,8 +305,9 @@
           <div class="who-meta">${esc(m.contact || '—')}</div>
           <div class="amt">${fmt(pp)}</div>
           <div class="acts">
-            <button class="icon-btn" data-action="edit-member" data-id="${m.id}" title="${unlocked ? esc(t('editMember')) : esc(t('editMember'))}" aria-label="Edit ${esc(m.name)}">${icon('edit')}</button>
-            ${unlocked ? `<button class="icon-btn" data-action="del-member" data-id="${m.id}" title="Remove" aria-label="Remove ${esc(m.name)}">${icon('trash')}</button>` : ''}
+            <button class="icon-btn" data-action="bill" data-id="${m.id}" title="${esc(t('invoice'))}" aria-label="${esc(t('invoice'))} ${esc(m.name)}">${icon('qr')}</button>
+            <button class="icon-btn" data-action="edit-member" data-id="${m.id}" title="${esc(t('editMember'))}" aria-label="Edit ${esc(m.name)}">${icon('edit')}</button>
+            ${unlocked ? `<button class="icon-btn" data-action="del-member" data-id="${m.id}" title="${esc(t('removeMember'))}" aria-label="Remove ${esc(m.name)}">${icon('trash')}</button>` : ''}
           </div>
         </div>`).join('')
       : `<div class="empty"><b>${esc(t('noMembersYet'))}</b>${esc(t('noMembersYetSub'))}</div>`;
@@ -287,7 +318,7 @@
           <div class="panel-title">${esc(t('familyMembers'))}</div>
           <div class="panel-desc">${esc(t('familyMembersDesc', { plan: CFG.short }))}</div>
         </div>
-        <button class="btn ${unlocked ? 'btn-primary' : 'btn-secondary'}" data-action="add-member">${icon(unlocked ? 'plus' : 'lock', 'sm')}${esc(t('addMember'))}</button>
+        <button class="btn ${unlocked ? 'btn-primary' : 'btn-secondary'} btn-sm" data-action="add-member">${icon(unlocked ? 'plus' : 'lock', 'sm')}<span>${esc(t('addMember'))}</span></button>
       </div>
       <div class="panel-body" style="padding-bottom:6px">
         <div class="seat-meter">
@@ -328,7 +359,7 @@
           <div class="panel-title">${esc(t('planSettings'))}</div>
           <div class="panel-desc">${esc(t('planSettingsDesc'))}</div>
         </div>
-        ${!unlocked ? `<button class="btn btn-secondary btn-sm" data-action="host-login">${icon('lock', 'sm')}${esc(t('unlockToEdit'))}</button>` : ''}
+        ${!unlocked ? `<button class="btn btn-secondary btn-sm" data-action="host-login">${icon('lock', 'sm')}<span>${esc(t('unlockToEdit'))}</span></button>` : ''}
       </div>
       <div class="panel-body">
         ${!unlocked ? `
@@ -337,7 +368,7 @@
             <strong>${icon('lock', 'sm')} ${esc(t('memberViewBannerTitle'))}</strong>
             <div>${esc(t('memberViewBannerDesc'))}</div>
           </div>
-          <button class="btn btn-soft btn-sm" data-action="host-login">${icon('unlock', 'sm')}${esc(t('hostLogin'))}</button>
+          <button class="btn btn-soft btn-sm" data-action="host-login">${icon('unlock', 'sm')}<span>${esc(t('hostLogin'))}</span></button>
         </div>` : ''}
         <div class="grid-2">
           <form data-form="plan" id="planForm" autocomplete="off">
@@ -357,7 +388,7 @@
             <div class="toggle-row"><div><b>${esc(t('hostSharesSeat'))}</b><small>${esc(t('hostSharesSeatSub'))}</small></div>
               <label class="switch"><input type="checkbox" name="hostShares" ${p.hostShares ? 'checked' : ''} ${unlocked ? '' : 'disabled'}><span></span></label></div>
             <div class="field"><label for="pNotes">${esc(t('notes'))}</label><textarea class="textarea" id="pNotes" name="notes" rows="3" ${unlocked ? '' : 'readonly'}>${esc(p.notes || '')}</textarea></div>
-            ${unlocked ? `<button class="btn btn-primary" type="submit">${esc(t('saveChanges'))}</button>` : `<button class="btn btn-secondary" type="button" data-action="host-login">${icon('lock', 'sm')}${esc(t('unlockToEdit'))}</button>`}
+            ${unlocked ? `<button class="btn btn-primary" type="submit">${esc(t('saveChanges'))}</button>` : `<button class="btn btn-secondary" type="button" data-action="host-login">${icon('lock', 'sm')}<span>${esc(t('unlockToEdit'))}</span></button>`}
           </form>
           <div>
             <div class="section-label" style="margin-top:0;padding-top:0">${esc(t('howItBreaksDown'))}</div>
@@ -377,9 +408,9 @@
         <div class="footer-brand"><b>${esc(host.name)}</b><span>${esc(host.title)} · ${esc(host.hours)}</span></div>
         <div class="footer-links">
           ${chans.length
-            ? chans.map((c) => `<a class="btn btn-secondary btn-sm" href="${esc(c.href)}" ${c.key === 'phone' || c.key === 'email' ? '' : 'target="_blank" rel="noopener"'}>${icon(c.icon, 'sm')}${c.label}</a>`).join('')
-            : `<button class="btn btn-secondary btn-sm" data-action="open-host">${icon('plus', 'sm')}${esc(t('addYoursPrompt'))}</button>`}
-          <a class="btn btn-ghost btn-sm" href="${esc(CFG.hubHref)}">${icon('home', 'sm')}${esc(t('allFamilies'))}</a>
+            ? chans.map((c) => `<a class="btn btn-secondary btn-sm" href="${esc(c.href)}" ${c.key === 'phone' || c.key === 'email' ? '' : 'target="_blank" rel="noopener"'}>${icon(c.icon, 'sm')}<span>${c.label}</span></a>`).join('')
+            : `<button class="btn btn-secondary btn-sm" data-action="open-host">${icon('plus', 'sm')}<span>${esc(t('addYoursPrompt'))}</span></button>`}
+          <a class="btn btn-ghost btn-sm" href="${esc(CFG.hubHref)}">${icon('home', 'sm')}<span>${esc(t('allFamilies'))}</span></a>
         </div>
         <div class="footer-copy">subm8 · ${unlocked ? '<span class="mode-tag unlocked">' + icon('crown', 'sm') + esc(t('hostModeActive')) + ' (<a href="#" data-action="host-lock">' + esc(t('lock')) + '</a>)</span>' : '<span class="mode-tag">' + icon('lock', 'sm') + esc(t('memberView')) + ' (<a href="#" data-action="host-login">' + esc(t('hostLogin')) + '</a>)</span>'} · ${esc(t('dataStoredPrivately'))}</div>
       </div>
@@ -388,7 +419,7 @@
 
   function render() {
     const st = stats(ui.month);
-    const body = ui.tab === 'members' ? membersTab() : ui.tab === 'plan' ? planTab() : paymentsTab();
+    const body = ui.tab === 'members' ? membersTab() : ui.tab === 'plan' ? planTab() : paymentsTab(st);
     app.innerHTML = header() + hero(st) +
       `<main class="container">${kpis(st)}${tabsNav()}${body}</main>` + footer();
     ui.anim = false;
@@ -397,6 +428,8 @@
   // ------------------------------------------------------------------------
   // Modals
   // ------------------------------------------------------------------------
+  let pendingConfirmFn = null;
+
   function openModal(o) {
     closeModal();
     const el = document.createElement('div');
@@ -404,6 +437,7 @@
     el.id = 'modalRoot';
     el.innerHTML = `
       <div class="modal ${o.wide ? 'wide' : ''}" role="dialog" aria-modal="true" aria-label="${esc(o.title)}">
+        <div class="modal-sheet-bar" aria-hidden="true"></div>
         <div class="modal-head">
           <div><h2>${esc(o.title)}</h2>${o.sub ? `<p>${esc(o.sub)}</p>` : ''}</div>
           <button class="icon-btn" data-action="close-modal" aria-label="Close">${icon('close')}</button>
@@ -421,6 +455,17 @@
     if (el) el.remove();
   }
 
+  function confirmModal(opts) {
+    pendingConfirmFn = opts.onConfirm || null;
+    openModal({
+      title: opts.title || t('confirmBtn'),
+      body: `<p style="color:var(--text-2);font-size:14.5px;line-height:1.6">${esc(opts.message)}</p>`,
+      foot: `
+        <button class="btn btn-secondary" data-action="close-modal">${esc(t('cancel'))}</button>
+        <button class="btn ${opts.danger ? 'btn-danger' : 'btn-primary'}" data-action="confirm-yes">${esc(opts.confirmLabel || t('confirmBtn'))}</button>`
+    });
+  }
+
   function contactModal() {
     const chans = SM.contactChannels(host);
     const anySet = chans.some((c) => c.value);
@@ -430,9 +475,9 @@
              <span class="contact-ic ${c.cls}">${icon(c.icon)}</span>
              <span class="contact-main"><small>${c.label}</small><b>${esc(c.value)}</b></span>
            </a>
-           <button class="icon-btn" type="button" data-action="copy" data-copy="${esc(c.value)}" title="Copy" aria-label="Copy ${c.label}">${icon('copy', 'sm')}</button>
+           <button class="icon-btn" type="button" data-action="copy" data-copy="${esc(c.value)}" title="${esc(t('copyBtn'))}" aria-label="Copy ${c.label}">${icon('copy', 'sm')}</button>
          </div>`
-      : `<div class="contact-item unset"><span class="contact-ic ${c.cls}">${icon(c.icon)}</span><span class="contact-main"><small>${c.label}</small><b>Not set</b></span></div>`
+      : `<div class="contact-item unset"><span class="contact-ic ${c.cls}">${icon(c.icon)}</span><span class="contact-main"><small>${c.label}</small><b>${esc(t('notSet'))}</b></span></div>`
     ).join('');
     openModal({
       title: t('contactHostTitle'),
@@ -446,8 +491,8 @@
           <div class="field"><label for="msgName">${esc(t('yourName'))}</label><input class="input" id="msgName" name="name" placeholder="${esc(t('whoIsThisFrom'))}"></div>
           <div class="field"><label for="msgText">${esc(t('messageText'))}</label><textarea class="textarea" id="msgText" name="text" rows="3" placeholder="${esc(t('msgPlaceholder'))}"></textarea></div>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary" type="submit" data-mode="email">${icon('mail', 'sm')}${esc(t('sendEmail'))}</button>
-            <button class="btn btn-secondary" type="submit" data-mode="copy">${icon('copy', 'sm')}${esc(t('copyForChat'))}</button>
+            <button class="btn btn-primary" type="submit" data-mode="email">${icon('mail', 'sm')}<span>${esc(t('sendEmail'))}</span></button>
+            <button class="btn btn-secondary" type="submit" data-mode="copy">${icon('copy', 'sm')}<span>${esc(t('copyForChat'))}</span></button>
           </div>
         </form>`,
       wide: true,
@@ -459,13 +504,13 @@
     const m = id ? site.members.find((x) => x.id === id) : null;
     openModal({
       title: m ? t('editMember') : t('addMember'),
-      sub: m ? t('editMember') : t('addMember'),
+      sub: m ? m.name : CFG.short,
       body: `
         <form data-form="member" id="memberForm" autocomplete="off">
           <input type="hidden" name="id" value="${m ? esc(m.id) : ''}">
-          <div class="field"><label for="mName">${esc(t('displayName'))}</label><input class="input" id="mName" name="name" value="${m ? esc(m.name) : ''}" required placeholder="Somchai / Nickname"></div>
+          <div class="field"><label for="mName">${esc(t('member'))}</label><input class="input" id="mName" name="name" value="${m ? esc(m.name) : ''}" required placeholder="e.g. Somchai / Mint"></div>
           <div class="field"><label for="mContact">${esc(t('contactChannels'))}</label><input class="input" id="mContact" name="contact" value="${m ? esc(m.contact || '') : ''}" placeholder="e.g. LINE: somchai.k, 081-xxx-xxxx"></div>
-          <div class="field"><label for="mNote">${esc(t('notes'))}</label><input class="input" id="mNote" name="note" value="${m ? esc(m.note || '') : ''}" placeholder="e.g. Pays on 1st, TV Room"></div>
+          <div class="field"><label for="mNote">${esc(t('notes'))}</label><input class="input" id="mNote" name="note" value="${m ? esc(m.note || '') : ''}" placeholder="e.g. Pays on 1st, Apple ID email"></div>
         </form>`,
       foot: `<button class="btn btn-secondary" data-action="close-modal">${esc(t('cancel'))}</button><button class="btn btn-primary" type="submit" form="memberForm">${esc(m ? t('saveChanges') : t('addMember'))}</button>`
     });
@@ -494,7 +539,7 @@
           <div class="field"><label for="hPin">${esc(t('hostPinLabel'))}</label><input class="input" id="hPin" name="pin" type="text" maxlength="12" value="${esc(host.pin || '1234')}" placeholder="1234">
             <div class="hint">${esc(t('hostPinHint'))}</div></div>
           <div class="section-label">${esc(t('reminderTemplate'))}</div>
-          <div class="field"><label for="hTpl">${esc(t('reminderTemplate'))}</label><textarea class="textarea" id="hTpl" name="template" rows="7">${esc(host.template)}</textarea>
+          <div class="field"><label for="hTpl">${esc(t('reminderTemplate'))}</label><textarea class="textarea" id="hTpl" name="template" rows="6">${esc(host.template)}</textarea>
             <div class="hint">${esc(t('templateHint'))}</div></div>
         </form>`,
       foot: `<button class="btn btn-secondary" data-action="close-modal">${esc(t('cancel'))}</button><button class="btn btn-primary" type="submit" form="hostForm">${esc(t('saveProfile'))}</button>`
@@ -509,16 +554,16 @@
         <div class="contact-list">
           <div class="contact-item"><span class="contact-ic phone">${icon('download')}</span>
             <span class="contact-main"><small>JSON</small><b>${esc(t('exportBackup'))}</b></span>
-            <button class="btn btn-secondary btn-sm" data-action="export">Download</button></div>
+            <button class="btn btn-secondary btn-sm" data-action="export">${esc(t('downloadBtn'))}</button></div>
           <div class="contact-item"><span class="contact-ic mail">${icon('upload')}</span>
             <span class="contact-main"><small>JSON</small><b>${esc(t('importBackup'))}</b></span>
-            <button class="btn btn-secondary btn-sm" data-action="import">Choose file</button></div>
-          <div class="contact-item"><span class="contact-ic list">${icon('copy')}</span>
+            <button class="btn btn-secondary btn-sm" data-action="import">${esc(t('chooseFileBtn'))}</button></div>
+          <div class="contact-item"><span class="contact-ic list" style="background:#475569">${icon('copy')}</span>
             <span class="contact-main"><small>GitHub / Git</small><b>${esc(t('exportConfig'))}</b></span>
-            <button class="btn btn-secondary btn-sm" data-action="copy-site-config">Copy</button></div>
+            <button class="btn btn-secondary btn-sm" data-action="copy-site-config">${esc(t('copyBtn'))}</button></div>
           <div class="contact-item"><span class="contact-ic" style="background:var(--red)">${icon('trash')}</span>
             <span class="contact-main"><small>Reset</small><b>${esc(t('resetDefaults'))}</b></span>
-            <button class="btn btn-danger btn-sm" data-action="reset">Reset</button></div>
+            <button class="btn btn-danger btn-sm" data-action="reset">${esc(t('resetBtn'))}</button></div>
         </div>
         <input type="file" id="importFile" accept="application/json,.json" hidden>`,
       foot: `<button class="btn btn-secondary" data-action="close-modal">${esc(t('close'))}</button>`,
@@ -530,9 +575,12 @@
     const m = site.members.find((x) => x.id === id);
     if (!m) return;
     const pp = perMember();
-    const paid = isPaid(ui.month, m.id);
+    const rec = payRecord(ui.month, m.id);
+    const paid = !!(rec && rec.paid);
+    const dateStr = paid && rec.paidAt ? fmtDate(rec.paidAt) : '';
     const msg = buildMessage(m);
     const unlocked = SM.isHostUnlocked(host);
+    const rawAmount = (Math.round(pp * 100) / 100).toString();
     openModal({
       title: t('invoiceTitle'),
       sub: monthLabel(ui.month) + ' · ' + site.plan.name,
@@ -540,25 +588,59 @@
       focus: false,
       body: `
         <div class="bill">
-          <div class="bill-head">${avatar(m.name)}<div><b>${esc(m.name)}</b><div class="who-meta">${esc(m.contact || '')}</div></div>
-            <span class="badge ${paid ? 'paid' : 'pending'}" style="margin-left:auto">${esc(paid ? t('paid') : t('unpaid'))}</span></div>
+          <div class="bill-head">
+            ${avatar(m.name)}
+            <div style="min-width:0">
+              <b>${esc(m.name)}</b>
+              <div class="who-meta">${esc(m.contact || m.note || t('familyMemberDefault'))}</div>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <span class="badge ${paid ? 'paid' : 'pending'}">${esc(paid ? t('paid') : t('unpaid'))}</span>
+              ${dateStr ? `<div class="paid-date" style="margin-top:3px">${esc(t('paidOn', { date: dateStr }))}</div>` : ''}
+            </div>
+          </div>
           <div class="bill-line"><span>${esc(site.plan.name)}</span><span>${fmt(pp)}</span></div>
-          <div class="bill-total"><span>${esc(t('totalDue'))}</span><b>${fmt(pp)}</b></div>
+          <div class="bill-line"><span>${esc(t('dueDay'))}</span><span>${esc(t('billedOnDay', { day: site.plan.billingDay }))}</span></div>
+          <div class="bill-total">
+            <span>${esc(t('totalDue'))}</span>
+            <div class="bill-total-right">
+              <b>${fmt(pp)}</b>
+              <button class="btn btn-soft btn-sm" type="button" data-action="copy" data-copy="${esc(rawAmount)}">${icon('copy', 'sm')}<span>${esc(t('copyAmount'))}</span></button>
+            </div>
+          </div>
         </div>
         <div class="qr-card" id="qrCard">
           <span class="qr-badge">${esc(t('promptPayTitle'))}</span>
           <div id="qrBox"></div>
           <div class="qr-meta">
-            <div class="line"><span>${esc(t('promptPayTitle'))}</span><b>${esc(host.promptPay || 'Not set')}</b>${host.promptPay ? `<button class="icon-btn" style="width:28px;height:28px" data-action="copy" data-copy="${esc(host.promptPay)}" aria-label="Copy PromptPay">${icon('copy', 'sm')}</button>` : ''}</div>
-            ${host.bankAccount ? `<div class="line"><span>${esc(host.bankName || t('bankName'))}</span><b>${esc(host.bankAccount)}</b><button class="icon-btn" style="width:28px;height:28px" data-action="copy" data-copy="${esc(host.bankAccount)}" aria-label="Copy account number">${icon('copy', 'sm')}</button></div>` : ''}
+            <div class="line">
+              <span>PromptPay</span>
+              <b>${esc(host.promptPay || t('notSet'))}</b>
+              ${host.promptPay ? `<button class="icon-btn" style="width:30px;height:30px" data-action="copy" data-copy="${esc(host.promptPay)}" aria-label="Copy PromptPay">${icon('copy', 'sm')}</button>` : ''}
+            </div>
+            ${host.bankAccount ? `
+            <div class="line">
+              <span>${esc(host.bankName || t('bankName'))}</span>
+              <b>${esc(host.bankAccount)}</b>
+              <button class="icon-btn" style="width:30px;height:30px" data-action="copy" data-copy="${esc(host.bankAccount)}" aria-label="Copy account number">${icon('copy', 'sm')}</button>
+            </div>` : ''}
           </div>
         </div>
-        <div class="field"><label for="billMsg">${esc(t('reminderTemplate'))}</label><textarea class="textarea" id="billMsg" rows="7" readonly>${esc(msg)}</textarea></div>
-        <button class="btn btn-secondary btn-sm" data-action="copy" data-copy="${esc(msg)}">${icon('copy', 'sm')}${esc(t('copyReminder'))}</button>`,
+        <details class="reminder-details" ${unlocked ? 'open' : ''}>
+          <summary>
+            <span>${icon('message', 'sm')} ${esc(t('reminderPreviewTitle'))}</span>
+            <span class="summary-actions">
+              <button class="btn btn-secondary btn-sm" type="button" data-action="copy" data-copy="${esc(msg)}">${icon('copy', 'sm')}<span>${esc(t('copyReminder'))}</span></button>
+            </span>
+          </summary>
+          <div class="reminder-body">
+            <textarea class="textarea" id="billMsg" rows="6" readonly>${esc(msg)}</textarea>
+          </div>
+        </details>`,
       foot: `<button class="btn btn-secondary" data-action="close-modal">${esc(t('close'))}</button>
              ${unlocked
-               ? `<button class="btn ${paid ? 'btn-secondary' : 'btn-success'}" data-action="toggle-paid-close" data-id="${m.id}">${esc(paid ? t('undo') : t('markPaid'))}</button>`
-               : `<button class="btn btn-primary" data-action="open-contact">${icon('message', 'sm')}${esc(t('sendSlipToHost'))}</button>`}`
+               ? `<button class="btn ${paid ? 'btn-secondary' : 'btn-success'}" data-action="toggle-paid-close" data-id="${m.id}">${icon('check', 'sm')}<span>${esc(paid ? t('undo') : t('markPaid'))}</span></button>`
+               : `<button class="btn btn-primary" data-action="open-contact">${icon('message', 'sm')}<span>${esc(t('sendSlipToHost'))}</span></button>`}`
     });
     renderQR(pp);
   }
@@ -597,6 +679,7 @@
       return;
     }
     const size = 220;
+    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&margin=0&data=' + encodeURIComponent(payload);
     const img = document.createElement('img');
     img.id = 'qrImage';
     img.className = 'qr-img';
@@ -605,7 +688,7 @@
     img.onerror = () => {
       box.innerHTML = `<div class="qr-fallback">${esc(t('promptPayOffline', { amount: fmt(amount) }))} <b>${esc(host.promptPay)}</b>.</div>`;
     };
-    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&margin=0&data=' + encodeURIComponent(payload);
+    img.src = qrUrl;
     box.innerHTML = '';
     box.appendChild(img);
   }
@@ -657,7 +740,7 @@
           <div class="pin-note">${esc(t('defaultPinNote'))}</div>
           <div id="pinError" style="display:none;color:var(--red);text-align:center;font-size:13px;font-weight:600;margin-top:6px">${icon('close', 'sm')} ${esc(t('incorrectPin'))}</div>
         </form>`,
-      foot: `<button class="btn btn-secondary" data-action="close-modal">${esc(t('cancel'))}</button><button class="btn btn-primary" type="submit" form="pinForm">${icon('unlock', 'sm')}${esc(t('unlockHostMode'))}</button>`
+      foot: `<button class="btn btn-secondary" data-action="close-modal">${esc(t('cancel'))}</button><button class="btn btn-primary" type="submit" form="pinForm">${icon('unlock', 'sm')}<span>${esc(t('unlockHostMode'))}</span></button>`
     });
     setTimeout(() => {
       const inp = document.getElementById('pinInput');
@@ -688,31 +771,44 @@
     'next-month': () => { ui.month = shiftMonth(ui.month, 1); render(); },
     'today': () => { ui.month = ymNow(); render(); },
     'goto-month': (id) => { ui.month = id; render(); },
+    'confirm-yes': () => {
+      const fn = pendingConfirmFn;
+      pendingConfirmFn = null;
+      closeModal();
+      if (typeof fn === 'function') fn();
+    },
     'toggle-paid': (id) => {
       requireHost(() => {
         const paid = !isPaid(ui.month, id);
         setPaid(ui.month, id, paid); render();
         toast(paid ? t('paid') : t('unpaid'));
-      }, 'change payment status');
+      }, t('markPaid'));
     },
     'toggle-paid-close': (id) => {
       requireHost(() => {
         const paid = !isPaid(ui.month, id);
         setPaid(ui.month, id, paid); closeModal(); render();
         toast(paid ? t('paid') : t('unpaid'));
-      }, 'change payment status');
+      }, t('markPaid'));
     },
     'mark-all': () => {
       requireHost(() => {
         if (!site.members.length) return;
-        if (confirm(t('confirmMarkAll', { month: monthLabel(ui.month) }))) {
-          site.members.forEach((m) => setPaid(ui.month, m.id, true)); render(); toast(t('allMarkedPaid'));
-        }
-      }, 'mark all as paid');
+        confirmModal({
+          title: t('confirmMarkAllTitle'),
+          message: t('confirmMarkAll', { month: monthLabel(ui.month) }),
+          confirmLabel: t('markAllPaid'),
+          onConfirm: () => {
+            site.members.forEach((m) => setPaid(ui.month, m.id, true));
+            render();
+            toast(t('allMarkedPaid'));
+          }
+        });
+      }, t('markAllPaid'));
     },
     'copy-pending': () => {
       const s = unpaidSummary();
-      if (!s) { toast(t('collected') + ' — ' + t('paidCount', { paid: site.members.length, n: site.members.length })); return; }
+      if (!s) { toast(t('allPaidBadge')); return; }
       copyText(s, t('unpaidSummaryCopied'));
     },
     'remind': (id) => {
@@ -725,10 +821,20 @@
     'del-member': (id) => {
       requireHost(() => {
         const m = site.members.find((x) => x.id === id);
-        if (m && confirm('Remove ' + m.name + ' from this plan? Their payment history will be kept.')) {
-          site.members = site.members.filter((x) => x.id !== id); save(); render(); toast(t('memberUpdated'));
-        }
-      }, 'remove a member');
+        if (!m) return;
+        confirmModal({
+          title: t('confirmRemoveTitle'),
+          message: t('confirmRemoveMember', { name: m.name }),
+          confirmLabel: t('removeMember'),
+          danger: true,
+          onConfirm: () => {
+            site.members = site.members.filter((x) => x.id !== id);
+            save();
+            render();
+            toast(t('memberUpdated'));
+          }
+        });
+      }, t('removeMember'));
     },
     'open-contact': () => contactModal(),
     'open-host': () => requireHost(() => hostModal(), t('hostSettings')),
@@ -760,15 +866,24 @@
       a.download = 'subm8-' + CFG.id + '-' + ymNow() + '.json';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-      toast('Backup downloaded');
+      toast(t('backupDownloaded'));
     },
     'import': () => { const i = document.getElementById('importFile'); if (i) i.click(); },
     'reset': () => {
       requireHost(() => {
-        if (confirm(t('resetWarning'))) {
-          site = defaultSite(); save(); closeModal(); render(); toast(t('resetDefaults'));
-        }
-      }, 'reset data');
+        confirmModal({
+          title: t('resetWarningTitle'),
+          message: t('resetWarning'),
+          confirmLabel: t('resetBtn'),
+          danger: true,
+          onConfirm: () => {
+            site = defaultSite();
+            save();
+            render();
+            toast(t('resetDefaults'));
+          }
+        });
+      }, t('resetDefaults'));
     }
   };
 
@@ -924,8 +1039,8 @@
           if (!d.plan || !Array.isArray(d.members)) throw new Error('bad file');
           site = Object.assign(defaultSite(), d);
           if (j.host) { host = Object.assign({}, SM.DEFAULT_HOST, j.host); SM.saveHost(host); }
-          save(); closeModal(); render(); toast('Backup restored');
-        } catch (err) { toast('That file is not a valid backup', 'error'); }
+          save(); closeModal(); render(); toast(t('backupRestored'));
+        } catch (err) { toast(t('invalidBackup'), 'error'); }
       };
       reader.readAsText(e.target.files[0]);
     }

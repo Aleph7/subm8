@@ -4,9 +4,10 @@ window.SITE_CONFIG = {
   brand: 'YouTube Premium Family',
   short: 'YouTube Premium',
   tagline: 'Ad-free videos, background play and YouTube Music — shared across your family group.',
+  taglineTh: 'ดูวิดีโอแบบไม่มีโฆษณาคั่น เล่นเบื้องหลัง และฟัง YouTube Music ร่วมกันในกลุ่มแฟมิลี่',
   logoIcon: 'play',
   hubHref: '../index.html',
-  switchTo: { label: 'Apple One family', href: '../apple/index.html', icon: 'cloud' },
+  switchTo: { label: 'Apple One Family', href: '../apple/index.html', icon: 'cloud' },
   plan: {
     name: 'YouTube Premium Family',
     totalCost: 399,

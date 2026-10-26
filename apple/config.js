@@ -4,9 +4,10 @@ window.SITE_CONFIG = {
   brand: 'Apple One Family',
   short: 'Apple One + iCloud',
   tagline: 'Apple One with 2 TB of iCloud+ storage — one subscription shared with your family.',
+  taglineTh: 'รวมบริการ Apple One พร้อมพื้นที่ iCloud+ 2 TB แชร์ร่วมกันผ่านระบบ Family Sharing',
   logoIcon: 'cloud',
   hubHref: '../index.html',
-  switchTo: { label: 'YouTube Premium family', href: '../youtube/index.html', icon: 'play' },
+  switchTo: { label: 'YouTube Premium', href: '../youtube/index.html', icon: 'play' },
   plan: {
     name: 'Apple One + iCloud 2TB',
     totalCost: 848,
