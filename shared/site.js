@@ -1,5 +1,5 @@
 /**
- * SubMate — family site application
+ * subm8 — family site application
  * One module powering every family site; behaviour & data come from window.SITE_CONFIG.
  */
 (function () {
@@ -78,6 +78,7 @@
   // Views
   // ------------------------------------------------------------------------
   function header() {
+    const unlocked = SM.isHostUnlocked(host);
     return `
     <header class="topbar">
       <div class="container topbar-inner">
@@ -93,6 +94,9 @@
           <a class="site-switch" href="${esc(CFG.switchTo.href)}" title="Switch to ${esc(CFG.switchTo.label)}">
             ${icon(CFG.switchTo.icon, 'sm')}<span>${esc(CFG.switchTo.label)}</span>
           </a>
+          ${unlocked
+            ? `<button class="btn btn-soft btn-sm host-pill unlocked" data-action="host-lock" title="Host Mode unlocked · Click to lock">${icon('crown', 'sm')}<span>Host Mode</span>${icon('lock', 'sm')}</button>`
+            : `<button class="btn btn-ghost btn-sm host-pill" data-action="host-login" title="Host login with PIN">${icon('lock', 'sm')}<span>Host login</span></button>`}
           <button class="btn btn-primary" data-action="open-contact">${icon('message', 'sm')}<span>Contact host</span></button>
           <button class="icon-btn" data-action="open-host" title="Host profile &amp; payment details" aria-label="Host profile">${icon('settings')}</button>
           <button class="icon-btn" data-action="open-backup" title="Backup &amp; restore" aria-label="Backup and restore">${icon('download')}</button>
@@ -174,6 +178,7 @@
       return `<div class="empty"><b>No matching members</b>Try a different search or filter.</div>`;
     }
     const pp = perMember();
+    const unlocked = SM.isHostUnlocked(host);
     const head = `<div class="row head"><div>Member</div><div>Amount</div><div>Status</div><div style="text-align:right">Actions</div></div>`;
     return head + list.map((m) => {
       const paid = isPaid(ui.month, m.id);
@@ -183,9 +188,11 @@
         <div class="amt">${fmt(pp)}</div>
         <div><span class="badge ${paid ? 'paid' : 'pending'}">${paid ? 'Paid' : 'Unpaid'}</span></div>
         <div class="acts">
-          ${paid
-            ? `<button class="btn btn-ghost btn-sm" data-action="toggle-paid" data-id="${m.id}">Undo</button>`
-            : `<button class="btn btn-success btn-sm" data-action="toggle-paid" data-id="${m.id}">${icon('check', 'sm')}Mark paid</button>`}
+          ${unlocked
+            ? (paid
+                ? `<button class="btn btn-ghost btn-sm" data-action="toggle-paid" data-id="${m.id}">Undo</button>`
+                : `<button class="btn btn-success btn-sm" data-action="toggle-paid" data-id="${m.id}">${icon('check', 'sm')}Mark paid</button>`)
+            : `<button class="btn btn-soft btn-sm" data-action="bill" data-id="${m.id}">${icon('qr', 'sm')}${paid ? 'Invoice' : 'Pay'}</button>`}
           <button class="icon-btn" data-action="bill" data-id="${m.id}" title="Invoice &amp; PromptPay QR" aria-label="Invoice and QR for ${esc(m.name)}">${icon('qr')}</button>
           <button class="icon-btn" data-action="remind" data-id="${m.id}" title="Copy reminder message" aria-label="Copy reminder for ${esc(m.name)}">${icon('copy')}</button>
         </div>
@@ -211,6 +218,7 @@
   }
 
   function paymentsTab() {
+    const unlocked = SM.isHostUnlocked(host);
     return `
     <div class="panel ${ui.anim ? 'anim' : ''}">
       <div class="panel-head">
@@ -235,7 +243,7 @@
         </div>
         <div class="toolbar-right">
           <button class="btn btn-secondary btn-sm" data-action="copy-pending">${icon('bell', 'sm')}Copy unpaid summary</button>
-          <button class="btn btn-secondary btn-sm" data-action="mark-all">${icon('check', 'sm')}Mark all paid</button>
+          ${unlocked ? `<button class="btn btn-secondary btn-sm" data-action="mark-all">${icon('check', 'sm')}Mark all paid</button>` : ''}
         </div>
       </div>
       <div class="rows" id="payRows">${payRows()}</div>
@@ -250,6 +258,7 @@
     const over = used > max;
     const pct = Math.min(100, Math.round((used / max) * 100));
     const pp = perMember();
+    const unlocked = SM.isHostUnlocked(host);
     const rows = site.members.length
       ? `<div class="row head members"><div>Member</div><div>Contact</div><div>Monthly</div><div style="text-align:right">Actions</div></div>` +
         site.members.map((m) => `
@@ -258,8 +267,8 @@
           <div class="who-meta">${esc(m.contact || '—')}</div>
           <div class="amt">${fmt(pp)}</div>
           <div class="acts">
-            <button class="icon-btn" data-action="edit-member" data-id="${m.id}" title="Edit" aria-label="Edit ${esc(m.name)}">${icon('edit')}</button>
-            <button class="icon-btn" data-action="del-member" data-id="${m.id}" title="Remove" aria-label="Remove ${esc(m.name)}">${icon('trash')}</button>
+            <button class="icon-btn" data-action="edit-member" data-id="${m.id}" title="${unlocked ? 'Edit' : 'Edit (Host passcode required)'}" aria-label="Edit ${esc(m.name)}">${icon('edit')}</button>
+            ${unlocked ? `<button class="icon-btn" data-action="del-member" data-id="${m.id}" title="Remove" aria-label="Remove ${esc(m.name)}">${icon('trash')}</button>` : ''}
           </div>
         </div>`).join('')
       : `<div class="empty"><b>No members yet</b>Add the first person who shares this plan.</div>`;
@@ -270,7 +279,7 @@
           <div class="panel-title">Family members</div>
           <div class="panel-desc">Everyone sharing the ${esc(CFG.short)} plan.</div>
         </div>
-        <button class="btn btn-primary" data-action="add-member">${icon('plus', 'sm')}Add member</button>
+        <button class="btn ${unlocked ? 'btn-primary' : 'btn-secondary'}" data-action="add-member">${icon(unlocked ? 'plus' : 'lock', 'sm')}${unlocked ? 'Add member' : 'Add member'}</button>
       </div>
       <div class="panel-body" style="padding-bottom:6px">
         <div class="seat-meter">
@@ -303,34 +312,44 @@
 
   function planTab() {
     const p = site.plan;
+    const unlocked = SM.isHostUnlocked(host);
     return `
     <div class="panel ${ui.anim ? 'anim' : ''}">
       <div class="panel-head">
         <div>
           <div class="panel-title">Plan &amp; billing</div>
-          <div class="panel-desc">Update the subscription price and how it is split.</div>
+          <div class="panel-desc">Subscription pricing and split details.</div>
         </div>
+        ${!unlocked ? `<button class="btn btn-secondary btn-sm" data-action="host-login">${icon('lock', 'sm')}Unlock to edit</button>` : ''}
       </div>
       <div class="panel-body">
+        ${!unlocked ? `
+        <div class="banner-locked">
+          <div>
+            <strong>${icon('lock', 'sm')} Member view</strong>
+            <div>Subscription settings and seat allocation are managed by your host.</div>
+          </div>
+          <button class="btn btn-soft btn-sm" data-action="host-login">${icon('unlock', 'sm')}Host login</button>
+        </div>` : ''}
         <div class="grid-2">
           <form data-form="plan" autocomplete="off">
-            <div class="field"><label for="pName">Plan name</label><input class="input" id="pName" name="name" value="${esc(p.name)}" required></div>
+            <div class="field"><label for="pName">Plan name</label><input class="input" id="pName" name="name" value="${esc(p.name)}" ${unlocked ? 'required' : 'readonly'}></div>
             <div class="field-row">
               <div class="field"><label for="pTotal">Monthly cost</label>
-                <div class="input-affix"><span class="affix">฿</span><input class="input" id="pTotal" name="totalCost" type="number" min="0" step="0.01" value="${esc(p.totalCost)}" required></div></div>
-              <div class="field"><label for="pSlots">Seats available</label><input class="input" id="pSlots" name="maxSlots" type="number" min="1" max="20" value="${esc(p.maxSlots)}" required></div>
+                <div class="input-affix"><span class="affix">฿</span><input class="input" id="pTotal" name="totalCost" type="number" min="0" step="0.01" value="${esc(p.totalCost)}" ${unlocked ? 'required' : 'readonly'}></div></div>
+              <div class="field"><label for="pSlots">Seats available</label><input class="input" id="pSlots" name="maxSlots" type="number" min="1" max="20" value="${esc(p.maxSlots)}" ${unlocked ? 'required' : 'readonly'}></div>
             </div>
             <div class="field"><label for="pPer">Charge per member</label>
               <div style="display:flex;gap:10px">
-                <div class="input-affix" style="flex:1"><span class="affix">฿</span><input class="input" id="pPer" name="perPerson" type="number" min="0" step="0.01" value="${esc(p.perPerson || '')}" placeholder="Auto"></div>
-                <button class="btn btn-secondary" type="button" data-action="auto-round">Round up</button>
+                <div class="input-affix" style="flex:1"><span class="affix">฿</span><input class="input" id="pPer" name="perPerson" type="number" min="0" step="0.01" value="${esc(p.perPerson || '')}" placeholder="Auto" ${unlocked ? '' : 'readonly'}></div>
+                ${unlocked ? `<button class="btn btn-secondary" type="button" data-action="auto-round">Round up</button>` : ''}
               </div>
               <div class="hint">Leave empty to split equally. “Round up” uses cost ÷ seats, rounded up.</div></div>
-            <div class="field"><label for="pDay">Billing day of month</label><input class="input" id="pDay" name="billingDay" type="number" min="1" max="31" value="${esc(p.billingDay)}" required></div>
+            <div class="field"><label for="pDay">Billing day of month</label><input class="input" id="pDay" name="billingDay" type="number" min="1" max="31" value="${esc(p.billingDay)}" ${unlocked ? 'required' : 'readonly'}></div>
             <div class="toggle-row"><div><b>I take one seat</b><small>The host is part of the family plan and covers the remainder.</small></div>
-              <label class="switch"><input type="checkbox" name="hostShares" ${p.hostShares ? 'checked' : ''}><span></span></label></div>
-            <div class="field"><label for="pNotes">Notes</label><textarea class="textarea" id="pNotes" name="notes" rows="3">${esc(p.notes || '')}</textarea></div>
-            <button class="btn btn-primary" type="submit">Save changes</button>
+              <label class="switch"><input type="checkbox" name="hostShares" ${p.hostShares ? 'checked' : ''} ${unlocked ? '' : 'disabled'}><span></span></label></div>
+            <div class="field"><label for="pNotes">Notes</label><textarea class="textarea" id="pNotes" name="notes" rows="3" ${unlocked ? '' : 'readonly'}>${esc(p.notes || '')}</textarea></div>
+            ${unlocked ? `<button class="btn btn-primary" type="submit">Save changes</button>` : `<button class="btn btn-secondary" type="button" data-action="host-login">${icon('lock', 'sm')}Unlock Host Mode to edit</button>`}
           </form>
           <div>
             <div class="section-label" style="margin-top:0;padding-top:0">How it breaks down</div>
@@ -343,6 +362,7 @@
 
   function footer() {
     const chans = SM.contactChannels(host).filter((c) => c.value);
+    const unlocked = SM.isHostUnlocked(host);
     return `
     <footer class="footer">
       <div class="container footer-inner">
@@ -353,7 +373,7 @@
             : `<button class="btn btn-secondary btn-sm" data-action="open-host">${icon('plus', 'sm')}Add contact details</button>`}
           <a class="btn btn-ghost btn-sm" href="${esc(CFG.hubHref)}">${icon('home', 'sm')}All families</a>
         </div>
-        <div class="footer-copy">SubMate · Data is stored privately in this browser. Use Backup to keep a copy.</div>
+        <div class="footer-copy">subm8 · ${unlocked ? '<span class="mode-tag unlocked">' + icon('crown', 'sm') + 'Host Mode active (<a href="#" data-action="host-lock">Lock</a>)</span>' : '<span class="mode-tag">' + icon('lock', 'sm') + 'Member view (<a href="#" data-action="host-login">Host login</a>)</span>'} · Data is stored privately in this browser.</div>
       </div>
     </footer>`;
   }
@@ -447,7 +467,7 @@
     const f = (id, name, label, ph, hint) =>
       `<div class="field"><label for="${id}">${label}</label><input class="input" id="${id}" name="${name}" value="${esc(host[name])}" placeholder="${esc(ph || '')}">${hint ? `<div class="hint">${hint}</div>` : ''}</div>`;
     openModal({
-      title: 'Host profile',
+      title: 'Host profile & settings',
       sub: 'Shared across every family site on this browser.',
       wide: true,
       body: `
@@ -462,6 +482,9 @@
           <div class="section-label">Payment details</div>
           ${f('hPay', 'promptPay', 'PromptPay (phone or 13-digit ID)', '0812345678', 'Used to generate a scannable QR code with the exact amount.')}
           <div class="field-row">${f('hBank', 'bankName', 'Bank', 'e.g. Kasikorn')}${f('hAcc', 'bankAccount', 'Account number', 'xxx-x-xxxxx-x')}</div>
+          <div class="section-label">Host Security &amp; Passcode</div>
+          <div class="field"><label for="hPin">Host PIN / Passcode</label><input class="input" id="hPin" name="pin" type="text" maxlength="12" value="${esc(host.pin || '1234')}" placeholder="1234">
+            <div class="hint">Passcode required to edit members, prices, host details, or mark payments. Default is <b>1234</b>.</div></div>
           <div class="section-label">Reminder message</div>
           <div class="field"><label for="hTpl">Template</label><textarea class="textarea" id="hTpl" name="template" rows="7">${esc(host.template)}</textarea>
             <div class="hint">Placeholders: {name} {plan} {month} {amount} {due} {promptpay} {bank} {account}</div></div>
@@ -498,6 +521,7 @@
     const pp = perMember();
     const paid = isPaid(ui.month, m.id);
     const msg = buildMessage(m);
+    const unlocked = SM.isHostUnlocked(host);
     openModal({
       title: 'Invoice',
       sub: monthLabel(ui.month) + ' · ' + site.plan.name,
@@ -521,7 +545,9 @@
         <div class="field"><label for="billMsg">Reminder message</label><textarea class="textarea" id="billMsg" rows="7" readonly>${esc(msg)}</textarea></div>
         <button class="btn btn-secondary btn-sm" data-action="copy" data-copy="${esc(msg)}">${icon('copy', 'sm')}Copy message</button>`,
       foot: `<button class="btn btn-secondary" data-action="close-modal">Close</button>
-             <button class="btn ${paid ? 'btn-secondary' : 'btn-success'}" data-action="toggle-paid-close" data-id="${m.id}">${paid ? 'Mark as unpaid' : 'Mark as paid'}</button>`
+             ${unlocked
+               ? `<button class="btn ${paid ? 'btn-secondary' : 'btn-success'}" data-action="toggle-paid-close" data-id="${m.id}">${paid ? 'Mark as unpaid' : 'Mark as paid'}</button>`
+               : `<button class="btn btn-primary" data-action="open-contact">${icon('message', 'sm')}Send slip to host</button>`}`
     });
     renderQR(pp);
   }
@@ -605,6 +631,38 @@
   }
 
   // ------------------------------------------------------------------------
+  // Host Security & PIN Verification
+  // ------------------------------------------------------------------------
+  let pendingHostAction = null;
+
+  function pinModal(onSuccess, actionName) {
+    pendingHostAction = onSuccess || null;
+    openModal({
+      title: 'Host Verification',
+      sub: actionName ? 'Enter passcode to ' + actionName + '.' : 'Enter your 4-digit host passcode to unlock host controls.',
+      body: `
+        <form data-form="pin" id="pinForm" autocomplete="off">
+          <input class="input pin-input" id="pinInput" name="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" placeholder="••••" required autofocus>
+          <div class="pin-note">Default passcode is <b>1234</b>. You can change this anytime in Host Settings.</div>
+          <div id="pinError" style="display:none;color:var(--red);text-align:center;font-size:13px;font-weight:600;margin-top:6px">${icon('close', 'sm')} Incorrect passcode. Please try again.</div>
+        </form>`,
+      foot: `<button class="btn btn-secondary" data-action="close-modal">Cancel</button><button class="btn btn-primary" type="submit" form="pinForm">${icon('unlock', 'sm')}Unlock Host Mode</button>`
+    });
+    setTimeout(() => {
+      const inp = document.getElementById('pinInput');
+      if (inp) inp.focus();
+    }, 50);
+  }
+
+  function requireHost(fn, actionName) {
+    if (SM.isHostUnlocked(host)) {
+      fn();
+    } else {
+      pinModal(fn, actionName);
+    }
+  }
+
+  // ------------------------------------------------------------------------
   // Actions
   // ------------------------------------------------------------------------
   const actions = {
@@ -615,20 +673,26 @@
     'today': () => { ui.month = ymNow(); render(); },
     'goto-month': (id) => { ui.month = id; render(); },
     'toggle-paid': (id) => {
-      const paid = !isPaid(ui.month, id);
-      setPaid(ui.month, id, paid); render();
-      toast(paid ? 'Marked as paid' : 'Marked as unpaid');
+      requireHost(() => {
+        const paid = !isPaid(ui.month, id);
+        setPaid(ui.month, id, paid); render();
+        toast(paid ? 'Marked as paid' : 'Marked as unpaid');
+      }, 'change payment status');
     },
     'toggle-paid-close': (id) => {
-      const paid = !isPaid(ui.month, id);
-      setPaid(ui.month, id, paid); closeModal(); render();
-      toast(paid ? 'Marked as paid' : 'Marked as unpaid');
+      requireHost(() => {
+        const paid = !isPaid(ui.month, id);
+        setPaid(ui.month, id, paid); closeModal(); render();
+        toast(paid ? 'Marked as paid' : 'Marked as unpaid');
+      }, 'change payment status');
     },
     'mark-all': () => {
-      if (!site.members.length) return;
-      if (confirm('Mark every member as paid for ' + monthLabel(ui.month) + '?')) {
-        site.members.forEach((m) => setPaid(ui.month, m.id, true)); render(); toast('All members marked as paid');
-      }
+      requireHost(() => {
+        if (!site.members.length) return;
+        if (confirm('Mark every member as paid for ' + monthLabel(ui.month) + '?')) {
+          site.members.forEach((m) => setPaid(ui.month, m.id, true)); render(); toast('All members marked as paid');
+        }
+      }, 'mark all as paid');
     },
     'copy-pending': () => {
       const s = unpaidSummary();
@@ -640,16 +704,20 @@
       if (m) copyText(buildMessage(m), 'Reminder for ' + m.name + ' copied');
     },
     'bill': (id) => billModal(id),
-    'add-member': () => memberModal(),
-    'edit-member': (id) => memberModal(id),
+    'add-member': () => requireHost(() => memberModal(), 'add a member'),
+    'edit-member': (id) => requireHost(() => memberModal(id), 'edit member details'),
     'del-member': (id) => {
-      const m = site.members.find((x) => x.id === id);
-      if (m && confirm('Remove ' + m.name + ' from this plan? Their payment history will be kept.')) {
-        site.members = site.members.filter((x) => x.id !== id); save(); render(); toast('Member removed');
-      }
+      requireHost(() => {
+        const m = site.members.find((x) => x.id === id);
+        if (m && confirm('Remove ' + m.name + ' from this plan? Their payment history will be kept.')) {
+          site.members = site.members.filter((x) => x.id !== id); save(); render(); toast('Member removed');
+        }
+      }, 'remove a member');
     },
     'open-contact': () => contactModal(),
-    'open-host': () => hostModal(),
+    'open-host': () => requireHost(() => hostModal(), 'access host settings'),
+    'host-login': () => pinModal(),
+    'host-lock': () => { SM.lockHost(); render(); toast('Host Mode locked'); },
     'open-backup': () => backupModal(),
     'close-modal': () => closeModal(),
     'copy': (id, el) => copyText(el.dataset.copy, 'Copied'),
@@ -660,23 +728,43 @@
       if (total > 0) { f.elements.perPerson.value = Math.ceil(total / seats); updatePlanPreview(); toast('Rounded to ' + fmt(Math.ceil(total / seats)) + ' per member'); }
     },
     'export': () => {
-      const blob = new Blob([JSON.stringify({ app: 'submate', site: CFG.id, exportedAt: new Date().toISOString(), data: site, host }, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify({ app: 'subm8', site: CFG.id, exportedAt: new Date().toISOString(), data: site, host }, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'submate-' + CFG.id + '-' + ymNow() + '.json';
+      a.download = 'subm8-' + CFG.id + '-' + ymNow() + '.json';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
       toast('Backup downloaded');
     },
     'import': () => { const i = document.getElementById('importFile'); if (i) i.click(); },
     'reset': () => {
-      if (confirm('Reset this site to its defaults? Members and payment history will be replaced.')) {
-        site = defaultSite(); save(); closeModal(); render(); toast('Reset to defaults');
-      }
+      requireHost(() => {
+        if (confirm('Reset this site to its defaults? Members and payment history will be replaced.')) {
+          site = defaultSite(); save(); closeModal(); render(); toast('Reset to defaults');
+        }
+      }, 'reset data');
     }
   };
 
   const forms = {
+    pin(f) {
+      const entered = (f.elements.pin.value || '').trim();
+      if (SM.unlockHost(host, entered)) {
+        closeModal();
+        render();
+        toast('Host Mode unlocked');
+        if (typeof pendingHostAction === 'function') {
+          const cb = pendingHostAction;
+          pendingHostAction = null;
+          cb();
+        }
+      } else {
+        const err = document.getElementById('pinError');
+        if (err) err.style.display = 'block';
+        const inp = document.getElementById('pinInput');
+        if (inp) { inp.value = ''; inp.focus(); }
+      }
+    },
     member(f) {
       const el = f.elements;
       const id = el.id.value;
@@ -687,6 +775,10 @@
       save(); closeModal(); render(); toast(id ? 'Member updated' : 'Member added');
     },
     plan(f) {
+      if (!SM.isHostUnlocked(host)) {
+        pinModal(() => forms.plan(f), 'save plan changes');
+        return;
+      }
       const el = f.elements;
       const total = parseFloat(el.totalCost.value);
       if (!(total > 0)) { toast('Enter a valid monthly cost', 'error'); return; }
@@ -704,6 +796,7 @@
     host(f) {
       ['name', 'title', 'hours', 'line', 'phone', 'email', 'facebook', 'instagram', 'promptPay', 'bankName', 'bankAccount', 'template']
         .forEach((k) => { host[k] = f.elements[k].value.trim(); });
+      host.pin = (f.elements.pin ? f.elements.pin.value.trim() : host.pin) || '1234';
       if (!host.name) host.name = SM.DEFAULT_HOST.name;
       if (!host.template) host.template = SM.DEFAULT_HOST.template;
       SM.saveHost(host); closeModal(); render(); toast('Host profile saved');

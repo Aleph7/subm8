@@ -1,5 +1,5 @@
 /**
- * SubMate — hub (landing) page
+ * subm8 — hub (landing) page
  * Lists each family site with live stats read from its saved data, plus host contact info.
  */
 (function () {
@@ -81,7 +81,7 @@
       <div class="container topbar-inner">
         <a class="brand" href="index.html">
           <span class="brand-logo">${icon('users')}</span>
-          <span><span class="brand-name" style="display:block">SubMate</span><span class="brand-sub" style="display:block">Family subscription manager</span></span>
+          <span><span class="brand-name" style="display:block">subm8</span><span class="brand-sub" style="display:block">Family subscription manager</span></span>
         </a>
       </div>
     </header>
@@ -98,7 +98,7 @@
     </main>
     <footer class="footer">
       <div class="container footer-inner">
-        <div class="footer-brand"><b>SubMate</b><span>Data is stored privately in this browser.</span></div>
+        <div class="footer-brand"><b>subm8</b><span>Data is stored privately in this browser.</span></div>
       </div>
     </footer>`;
 

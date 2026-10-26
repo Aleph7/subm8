@@ -1,5 +1,5 @@
 /**
- * SubMate — shared core
+ * subm8 — shared core
  * Icons, formatting helpers, and the host profile (contact + payment info),
  * which is stored once and shared by every family site.
  */
@@ -39,7 +39,10 @@
     cloud: '<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>',
     play: '<polygon points="6 4 20 12 6 20 6 4" fill="currentColor"/>',
     shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
-    clockSm: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
+    clockSm: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    lock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    unlock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
+    crown: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'
   };
 
   function icon(name, cls) {
@@ -110,13 +113,43 @@
     promptPay: '',
     bankName: '',
     bankAccount: '',
+    pin: '1234',
     template: DEFAULT_TEMPLATE
   };
+
+  const PIN_SESSION_KEY = 'subm8.host.unlocked';
+
+  function isHostUnlocked(host) {
+    const pin = (host && host.pin ? String(host.pin).trim() : '');
+    if (!pin) return true;
+    try {
+      return sessionStorage.getItem(PIN_SESSION_KEY) === 'true';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function unlockHost(host, enteredPin) {
+    const pin = (host && host.pin ? String(host.pin).trim() : '1234');
+    if (String(enteredPin).trim() === pin) {
+      try { sessionStorage.setItem(PIN_SESSION_KEY, 'true'); } catch (e) {}
+      return true;
+    }
+    return false;
+  }
+
+  function lockHost() {
+    try { sessionStorage.removeItem(PIN_SESSION_KEY); } catch (e) {}
+  }
 
   function loadHost() {
     try {
       const raw = JSON.parse(localStorage.getItem(HOST_KEY));
-      if (raw && typeof raw === 'object') return Object.assign({}, DEFAULT_HOST, raw);
+      if (raw && typeof raw === 'object') {
+        const h = Object.assign({}, DEFAULT_HOST, raw);
+        if (!h.pin) h.pin = '1234';
+        return h;
+      }
     } catch (e) { /* ignore */ }
     return Object.assign({}, DEFAULT_HOST);
   }
@@ -181,8 +214,9 @@
   }
 
   global.SM = {
-    HOST_KEY: HOST_KEY, icon: icon, esc: esc, fmt: fmt, ymNow: ymNow, monthLabel: monthLabel,
+    HOST_KEY: HOST_KEY, PIN_SESSION_KEY: PIN_SESSION_KEY, icon: icon, esc: esc, fmt: fmt, ymNow: ymNow, monthLabel: monthLabel,
     shiftMonth: shiftMonth, avatar: avatar, loadHost: loadHost, saveHost: saveHost,
+    isHostUnlocked: isHostUnlocked, unlockHost: unlockHost, lockHost: lockHost,
     DEFAULT_HOST: DEFAULT_HOST, contactChannels: contactChannels, urlFor: urlFor,
     toast: toast, copyText: copyText
   };

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SubMate — Shared Design System
+   subm8 — Shared Design System
    Clean, light, professional. Brand accent is set per site via [data-theme].
    ========================================================================== */
 
@@ -57,7 +57,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; width: 100%; }
 
 body {
   font-family: var(--font);
@@ -67,6 +67,8 @@ body {
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -469,43 +471,139 @@ a { color: inherit; text-decoration: none; }
 .site-stat { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
 .site-stat .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
 .site-stat .v { font-size: 19px; font-weight: 800; letter-spacing: -.02em; }
-.hub-contact { margin-top: 36px; }
+/* ---------- Host Mode & PIN Security ---------- */
+.host-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: var(--r-pill);
+  font-size: 13px; font-weight: 600;
+}
+.host-pill.unlocked {
+  background: var(--accent-soft); color: var(--accent-dark);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.host-pill.unlocked:hover {
+  background: color-mix(in srgb, var(--accent) 20%, white);
+}
+.banner-locked {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 16px; font-size: 13.5px; color: var(--text-2);
+}
+.banner-locked strong { color: var(--text); }
+.banner-locked .banner-link { color: var(--accent); font-weight: 600; cursor: pointer; }
+.banner-locked .banner-link:hover { text-decoration: underline; }
+.pin-input {
+  font-size: 24px; letter-spacing: 0.35em; text-align: center; font-weight: 700;
+  max-width: 240px; margin: 12px auto; display: block;
+}
+.pin-note { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.mode-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
+.mode-tag a { color: var(--accent); font-weight: 600; }
+.mode-tag.unlocked { color: var(--accent-dark); font-weight: 600; }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 960px) {
+.tabs { scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+
+/* Laptop / small tablet landscape */
+@media (max-width: 1024px) {
   .kpis { grid-template-columns: repeat(2, 1fr); }
   .grid-2 { grid-template-columns: 1fr; }
   .brand-sub { display: none; }
-  .btn .label-hide-md { display: none; }
 }
-@media (max-width: 760px) {
-  .container { padding: 0 16px; }
-  .topbar-inner { height: auto; padding: 10px 0; flex-wrap: wrap; }
-  .site-switch span { display: none; }
-  .hero { padding-bottom: 76px; }
-  .ring-wrap { width: 120px; height: 120px; }
+
+/* Tablet portrait and below: stack list rows into cards */
+@media (max-width: 860px) {
   .row.head { display: none; }
   .row, .row.members {
-    grid-template-columns: 1fr auto; grid-template-areas: 'who amt' 'status acts'; gap: 10px 12px; padding: 14px 16px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'who amt' 'status acts';
+    gap: 10px 12px; padding: 14px 16px;
   }
   .row > :nth-child(1) { grid-area: who; }
   .row > :nth-child(2) { grid-area: amt; text-align: right; }
   .row > :nth-child(3) { grid-area: status; }
   .row > :nth-child(4) { grid-area: acts; }
   .row.members { grid-template-areas: 'who amt' 'meta acts'; }
-  .row.members > :nth-child(2) { grid-area: meta; text-align: left; text-align: start; }
-  .row.members > :nth-child(3) { grid-area: amt; }
+  .row.members > :nth-child(2) { grid-area: meta; text-align: left; }
+  .row.members > :nth-child(3) { grid-area: amt; text-align: right; }
   .row.members > :nth-child(4) { grid-area: acts; }
-  .history-bars { gap: 6px; }
-  .field-row { grid-template-columns: 1fr; }
   .hub-grid { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr 1fr; }
+}
+
+/* Large phones / small tablets */
+@media (max-width: 760px) {
+  .container { padding: 0 16px; }
+  .topbar-inner { height: auto; padding: 10px 0; flex-wrap: wrap; row-gap: 8px; }
+  .topbar-actions { margin-left: auto; }
+  .site-switch span { display: none; }
+  .hero { padding: 28px 0 76px; }
+  .hero-inner { gap: 22px; }
+  .ring-wrap { width: 120px; height: 120px; }
+  .ring-label b { font-size: 25px; }
+  .history-bars { gap: 6px; }
+  .toolbar { padding: 12px 16px; }
   .toolbar-left, .toolbar-right { width: 100%; }
   .search { flex: 1; min-width: 0; }
+  .panel-head { padding: 16px; }
+  .panel-body { padding: 16px; }
+  .history { padding: 16px; }
+  /* 16px inputs stop iOS Safari from zooming the page on focus */
+  .input, .textarea, .select, .search input { font-size: 16px; }
+  .footer-inner { padding: 22px 16px; }
 }
-@media (max-width: 480px) {
-  .kpis { grid-template-columns: 1fr; margin-top: -44px; }
+
+/* Phones */
+@media (max-width: 560px) {
+  .topbar-actions { gap: 6px; }
+  [data-action="open-contact"] span { display: none; }
+  [data-action="open-contact"] { width: 36px; height: 36px; padding: 0; border-radius: 10px; }
+  .host-pill { padding: 6px 10px; font-size: 12.5px; }
+  .field-row { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: -44px; }
+  .kpi { padding: 14px; }
+  .kpi-value { font-size: 21px; }
+  .kpi-sub { font-size: 11.5px; }
+  .hero-chip { padding: 8px 12px; }
+  .hero-chip .v { font-size: 16px; }
+  .month-nav { width: 100%; justify-content: space-between; }
+  .panel-head > .month-nav { margin-top: 2px; }
+  .toast-wrap, .toasts { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .toast { width: 100%; }
+
+  /* Modals become bottom sheets */
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal, .modal.wide {
+    max-width: none; border-radius: 20px 20px 0 0;
+    max-height: 92vh; max-height: 92dvh; animation: sheet .26s var(--ease);
+  }
   .modal-head, .modal-body, .modal-foot { padding-left: 18px; padding-right: 18px; }
+  .modal-foot { border-radius: 0; padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+  .modal-foot .btn { flex: 1; }
+  .contact-ic { width: 36px; height: 36px; }
 }
+@keyframes sheet { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
+
+/* Touch devices: comfortable tap targets */
+@media (pointer: coarse) {
+  .icon-btn { width: 44px; height: 44px; }
+  .month-nav .icon-btn { width: 40px; height: 40px; }
+  .btn { min-height: 44px; }
+  .btn-sm { min-height: 40px; padding: 9px 14px; }
+  .segmented button { padding: 10px 14px; }
+  .tab { padding: 14px 16px; }
+  .search { height: 44px; }
+  .switch { width: 48px; height: 28px; }
+  .switch span::after { width: 22px; height: 22px; }
+  .switch input:checked + span::after { transform: translateX(20px); }
+  .site-card:hover, .contact-item:hover { transform: none; }
+}
+
+/* Notched phones / home indicator */
+.footer-inner { padding-bottom: calc(26px + env(safe-area-inset-bottom)); }
+.topbar-inner { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
