@@ -176,6 +176,7 @@
       ${tabBtn('payments', 'wallet', t('tabPayments'), null)}
       ${tabBtn('members', 'users', t('tabMembers'), site.members.length)}
       ${tabBtn('plan', 'sliders', t('tabPlan'), null)}
+      ${tabBtn('about', 'sparkles', t('tabAbout'), null)}
     </nav>`;
   }
 
@@ -419,7 +420,13 @@
 
   function render() {
     const st = stats(ui.month);
-    const body = ui.tab === 'members' ? membersTab() : ui.tab === 'plan' ? planTab() : paymentsTab(st);
+    const body = ui.tab === 'members'
+      ? membersTab()
+      : ui.tab === 'plan'
+        ? planTab()
+        : ui.tab === 'about'
+          ? SM.renderAboutBento({ assetPrefix: '../' })
+          : paymentsTab(st);
     app.innerHTML = header() + hero(st) +
       `<main class="container">${kpis(st)}${tabsNav()}${body}</main>` + footer();
     ui.anim = false;
@@ -988,6 +995,7 @@
   // Events
   // ------------------------------------------------------------------------
   document.addEventListener('click', (e) => {
+    if (SM.handleAboutClick && SM.handleAboutClick(e)) return;
     if (e.target.classList && e.target.classList.contains('modal-overlay')) { closeModal(); return; }
 
     // Explicitly handle type="submit" buttons (especially outside forms like in modal footers)

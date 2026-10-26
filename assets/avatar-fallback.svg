@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="240" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <linearGradient id="hoodie" x1="60" y1="150" x2="180" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="240" rx="56" fill="url(#bgGrad)"/>
+  <circle cx="195" cy="45" r="28" fill="#ffffff" fill-opacity="0.14"/>
+  <circle cx="42" cy="185" r="36" fill="#ffffff" fill-opacity="0.1"/>
+  <!-- Shoulders / Hoodie -->
+  <path d="M44 240c6-44 36-68 76-68s70 24 76 68H44z" fill="url(#hoodie)"/>
+  <path d="M98 174l22 26 22-26" stroke="#818cf8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Neck -->
+  <rect x="104" y="146" width="32" height="32" rx="14" fill="#fde68a"/>
+  <!-- Head -->
+  <rect x="72" y="64" width="96" height="96" rx="44" fill="#fef3c7"/>
+  <!-- Headphones band -->
+  <path d="M64 112a56 56 0 0 1 112 0" stroke="#e2e8f0" stroke-width="10" stroke-linecap="round"/>
+  <rect x="54" y="100" width="16" height="34" rx="8" fill="#38bdf8"/>
+  <rect x="170" y="100" width="16" height="34" rx="8" fill="#38bdf8"/>
+  <!-- Hair -->
+  <path d="M74 98c2-26 20-42 46-42s44 16 46 42c-10-12-24-18-46-18s-36 6-46 18z" fill="#1e293b"/>
+  <!-- Glasses -->
+  <rect x="85" y="102" width="30" height="22" rx="8" fill="#ffffff" fill-opacity="0.45" stroke="#1e293b" stroke-width="4"/>
+  <rect x="125" y="102" width="30" height="22" rx="8" fill="#ffffff" fill-opacity="0.45" stroke="#1e293b" stroke-width="4"/>
+  <line x1="115" y1="112" x2="125" y2="112" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/>
+  <!-- Eyes -->
+  <circle cx="100" cy="113" r="3.8" fill="#0f172a"/>
+  <circle cx="140" cy="113" r="3.8" fill="#0f172a"/>
+  <!-- Smile -->
+  <path d="M108 136c7 7 17 7 24 0" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Cheek blush -->
+  <ellipse cx="88" cy="128" rx="6" ry="3.5" fill="#f472b6" fill-opacity="0.45"/>
+  <ellipse cx="152" cy="128" rx="6" ry="3.5" fill="#f472b6" fill-opacity="0.45"/>
+</svg>

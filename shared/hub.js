@@ -1,11 +1,12 @@
 /**
  * subm8 — hub (landing) page
- * Lists each family site with live stats read from its saved data, plus host contact info.
+ * Lists each family site with live stats read from its saved data,
+ * the interactive "About Me" Bento Grid, plus host contact info.
  */
 (function () {
   'use strict';
   const SM = window.SM;
-  const { icon, esc, fmt, ymNow, monthLabel, avatar, contactChannels, loadHost, copyText, t, getLang, toggleLang, toast } = SM;
+  const { icon, esc, fmt, ymNow, monthLabel, avatar, contactChannels, loadHost, copyText, t, getLang, toggleLang, toast, renderAboutBento, handleAboutClick } = SM;
 
   const SITES = [
     {
@@ -144,6 +145,7 @@
           </a>
           <div class="topbar-spacer"></div>
           <div class="topbar-actions">
+            <a class="site-switch" href="#aboutMeSection">${icon('sparkles', 'sm')}<span>${esc(t('tabAbout'))}</span></a>
             <a class="site-switch" href="youtube/index.html">${icon('play', 'sm')}<span>YouTube</span></a>
             <a class="site-switch" href="apple/index.html">${icon('cloud', 'sm')}<span>Apple One</span></a>
             <button class="lang-pill" data-action="toggle-lang" title="${esc(t('langTitle'))}" aria-label="${esc(t('langTitle'))}">
@@ -166,16 +168,18 @@
       </section>
       <main class="container">
         <div class="hub-grid">${allStats.map((x) => card(x.site, x.st)).join('')}</div>
+        ${renderAboutBento({ assetPrefix: './' })}
         ${contact()}
       </main>
       <footer class="footer">
         <div class="container footer-inner">
-          <div class="footer-brand"><b>subm8</b><span>${esc(t('dataStoredPrivately'))}</span></div>
+          <div class="footer-brand"><b>subm8 · Natthaset Attharungroj</b><span>AIT @ KMITL · ${esc(t('dataStoredPrivately'))}</span></div>
         </div>
       </footer>`;
   }
 
   document.addEventListener('click', (e) => {
+    if (handleAboutClick(e)) return;
     const langBtn = e.target.closest('[data-action="toggle-lang"]');
     if (langBtn) {
       e.preventDefault();

@@ -1,7 +1,7 @@
 /**
  * subm8 — shared core
- * Icons, formatting helpers, and the host profile (contact + payment info),
- * which is stored once and shared by every family site.
+ * Icons, formatting helpers, i18n, interactive "About Me" Bento widget,
+ * and the host profile (contact + payment info) shared across all sites.
  */
 (function (global) {
   'use strict';
@@ -44,7 +44,9 @@
     clockSm: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
     lock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
     unlock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
-    crown: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'
+    crown: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+    sparkles: '<path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/>',
+    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'
   };
 
   function icon(name, cls) {
@@ -109,6 +111,7 @@
       tabPayments: 'รายการชำระเงิน',
       tabMembers: 'สมาชิก',
       tabPlan: 'แพ็กเกจ & ราคา',
+      tabAbout: 'เกี่ยวกับโฮสต์',
       monthlyPayments: 'การชำระเงินประจำเดือน',
       trackPaymentsDesc: 'ตรวจสอบสถานะการชำระเงินและสแกนจ่ายประจำเดือน {month}',
       today: 'เดือนปัจจุบัน',
@@ -253,7 +256,27 @@
       hubTotalCollected: 'เก็บได้แล้วเดือนนี้',
       hubTotalOutstanding: 'รอเก็บเพิ่มเดือนนี้',
       hubPaidProgress: 'จ่ายแล้ว {paid}/{n} คน',
-      paymentChannelsTitle: 'ช่องทางโอนเงินของโฮสต์'
+      paymentChannelsTitle: 'ช่องทางโอนเงินของโฮสต์',
+      // About Me Bento translations
+      aboutSectionEyebrow: '✨ ABOUT THE HOST · โฮสต์ผู้ดูแลแฟมิลี่',
+      aboutRoleBadge: 'AI Tech Undergrad & Creator',
+      aboutBio: 'นักศึกษาสาย AI ที่ชอบสร้างเว็บและเครื่องมือเจ๋งๆ ดูแลระบบหารค่าสตรีมมิ่งให้ทุกคนในตี้ใช้งานได้แบบชิลๆ 🎧✨',
+      aboutTapStatusHint: 'แตะเพื่อเปลี่ยนสถานะ',
+      aboutAgeLabel: 'อายุ (AGE)',
+      aboutYearsOld: '20 ปี',
+      aboutBirthdayLabel: 'วันเกิด (BIRTHDAY)',
+      aboutBirthdayVal: '23 กุมภาพันธ์ 2006',
+      aboutEducationLabel: 'การศึกษา (EDUCATION)',
+      aboutMajor: 'Artificial Intelligence Technology (AIT)',
+      aboutUni: 'สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง (KMITL)',
+      aboutStickersLabel: 'INTERESTS & VIBES · แตะสติกเกอร์เล่นได้!',
+      aboutVibeCardLabel: 'DAILY VIBE & MOOD',
+      aboutShuffleBtn: '🎲 สุ่มโควทใหม่',
+      aboutBeatBtnOn: '🎵 Vibe Mode: ON',
+      aboutBeatBtnOff: '🎧 Vibe Mode: Chill',
+      aboutCopyProfileBtn: 'คัดลอกชื่อ & ข้อมูลโฮสต์',
+      aboutCopiedBtn: 'คัดลอกเรียบร้อย! ✨',
+      aboutPhotoHint: 'วางไฟล์รูปที่ ./assets/profile.jpg'
     },
     en: {
       langBtn: '🇬🇧 EN',
@@ -288,6 +311,7 @@
       tabPayments: 'Payments',
       tabMembers: 'Members',
       tabPlan: 'Plan & billing',
+      tabAbout: 'About Host',
       monthlyPayments: 'Monthly payments',
       trackPaymentsDesc: 'Track payment status and PromptPay QR invoices for {month}.',
       today: 'Current month',
@@ -432,7 +456,27 @@
       hubTotalCollected: 'Collected this month',
       hubTotalOutstanding: 'Remaining this month',
       hubPaidProgress: '{paid}/{n} paid',
-      paymentChannelsTitle: 'Host payment channels'
+      paymentChannelsTitle: 'Host payment channels',
+      // About Me Bento translations
+      aboutSectionEyebrow: '✨ ABOUT THE HOST · MEET THE CREATOR',
+      aboutRoleBadge: 'AI Tech Undergrad & Builder',
+      aboutBio: 'AI student building clean web tools, exploring machine learning, and keeping our shared subscriptions running smoothly 🎧✨',
+      aboutTapStatusHint: 'Tap to switch status',
+      aboutAgeLabel: 'AGE',
+      aboutYearsOld: '20 years old',
+      aboutBirthdayLabel: 'BIRTHDAY',
+      aboutBirthdayVal: '23 February 2006',
+      aboutEducationLabel: 'EDUCATION',
+      aboutMajor: 'Artificial Intelligence Technology (AIT)',
+      aboutUni: "King Mongkut's Institute of Technology Ladkrabang (KMITL)",
+      aboutStickersLabel: 'INTERESTS & VIBES · TAP A STICKER!',
+      aboutVibeCardLabel: 'DAILY VIBE & MOOD',
+      aboutShuffleBtn: '🎲 Shuffle Quote',
+      aboutBeatBtnOn: '🎵 Vibe Mode: ON',
+      aboutBeatBtnOff: '🎧 Vibe Mode: Chill',
+      aboutCopyProfileBtn: 'Copy Host Card',
+      aboutCopiedBtn: 'Copied! ✨',
+      aboutPhotoHint: 'Drop photo at ./assets/profile.jpg'
     }
   };
 
@@ -512,9 +556,9 @@
     'Please send the slip after transfer. Thank you! 🙏';
 
   const DEFAULT_HOST = {
-    name: 'Your Name',
-    title: 'Family plan host',
-    hours: 'Usually replies within a few hours',
+    name: 'Natthaset Attharungroj',
+    title: 'AIT @ KMITL · Family Plan Host',
+    hours: 'Usually replies fast · ทักแชทได้ตลอดครับ',
     line: '',
     phone: '',
     email: '',
@@ -564,6 +608,8 @@
       if (raw && typeof raw === 'object') {
         const h = Object.assign({}, DEFAULT_HOST, raw);
         if (!h.pin) h.pin = '1234';
+        if (h.name === 'Your Name') h.name = DEFAULT_HOST.name;
+        if (h.title === 'Family plan host') h.title = DEFAULT_HOST.title;
         return h;
       }
     } catch (e) { /* ignore */ }
@@ -605,13 +651,13 @@
       box.setAttribute('aria-live', 'polite');
       document.body.appendChild(box);
     }
-    const t = document.createElement('div');
-    t.className = 'toast ' + (type === 'error' ? 'error' : '');
-    t.innerHTML = icon(type === 'error' ? 'close' : 'check') + '<span>' + esc(message) + '</span>';
-    box.appendChild(t);
+    const el = document.createElement('div');
+    el.className = 'toast ' + (type === 'error' ? 'error' : '');
+    el.innerHTML = icon(type === 'error' ? 'close' : 'check') + '<span>' + esc(message) + '</span>';
+    box.appendChild(el);
     setTimeout(function () {
-      t.style.opacity = '0'; t.style.transform = 'translateY(8px)';
-      setTimeout(function () { t.remove(); }, 220);
+      el.style.opacity = '0'; el.style.transform = 'translateY(8px)';
+      setTimeout(function () { el.remove(); }, 220);
     }, 2800);
   }
 
@@ -629,6 +675,238 @@
     }
   }
 
+  // ---- Interactive "About Me" Bento State & Component ---------------------
+  const ABOUT_STATUSES = [
+    '🟢 Vibing & building cool projects',
+    '🧠 Training AI models @ KMITL',
+    '☕ Powered by iced americano & lo-fi beats',
+    '⚡ Shipping clean UI & late-night code',
+    '🎮 AFK touching grass (jk still coding)'
+  ];
+
+  const ABOUT_QUOTES = [
+    { text: '"Code is like humor. When you have to explain it, it’s bad — keep it chill & clean."', tag: '✨ Current Mood' },
+    { text: '"Studying Artificial Intelligence so the robots remember I was nice to them 🤖"', tag: '🧠 AIT @ KMITL' },
+    { text: '"Good coffee, lo-fi playlists, and zero merge conflicts — peak 20-year-old peace."', tag: '☕ Daily Fuel' },
+    { text: '" Turning neural nets and midnight ideas into real-world side projects."', tag: '🚀 Builder Era' }
+  ];
+
+  const ABOUT_STICKERS = [
+    { id: 'ai', label: '🤖 AI & Code', reaction: '🤖 Building smart things with AI @ KMITL!' },
+    { id: 'music', label: '🎵 Music & Lo-Fi', reaction: '🎵 Lo-fi & indie playlists on repeat 🎧' },
+    { id: 'coffee', label: '☕ Iced Coffee', reaction: '☕ +100% coding speed unlocked!' },
+    { id: 'ui', label: '✨ UI/UX Craft', reaction: '✨ Smooth corners & bouncy transitions only!' },
+    { id: 'ml', label: '🧠 Deep Learning', reaction: '🧠 Neural networks & PyTorch vibes' },
+    { id: 'gaming', label: '🎮 Gaming', reaction: '🎮 Ready to queue after deployment!' }
+  ];
+
+  const aboutState = {
+    statusIdx: 0,
+    quoteIdx: 0,
+    vibeBeat: true,
+    activeStickers: { ai: true, coffee: true },
+    copiedProfile: false
+  };
+
+  function renderAboutBento(opts) {
+    opts = opts || {};
+    const prefix = opts.assetPrefix || './';
+    const statusText = ABOUT_STATUSES[aboutState.statusIdx % ABOUT_STATUSES.length];
+    const quoteObj = ABOUT_QUOTES[aboutState.quoteIdx % ABOUT_QUOTES.length];
+
+    const stickersHtml = ABOUT_STICKERS.map((s) => {
+      const active = !!aboutState.activeStickers[s.id];
+      return `<button type="button" class="sticker-pill ${active ? 'active' : ''}" data-about-action="sticker" data-sticker-id="${s.id}">
+        <span>${esc(s.label)}</span>
+      </button>`;
+    }).join('');
+
+    return `
+    <section class="about-bento-wrap ${aboutState.vibeBeat ? 'vibe-glow' : ''}" id="aboutMeSection" aria-label="About Natthaset Attharungroj">
+      <div class="about-section-head">
+        <span class="about-eyebrow">${esc(t('aboutSectionEyebrow'))}</span>
+      </div>
+
+      <div class="bento-grid">
+        <!-- 1. Main Profile Hero Card -->
+        <div class="bento-card bento-profile">
+          <div class="bento-profile-top">
+            <div class="bento-photo-frame" title="${esc(t('aboutPhotoHint'))}">
+              <img
+                src="${esc(prefix)}assets/profile.jpg"
+                onerror="this.onerror=null;this.src='${esc(prefix)}assets/avatar-fallback.svg'"
+                alt="Natthaset Attharungroj"
+                class="bento-photo"
+                loading="lazy"
+              >
+              <span class="bento-photo-badge" aria-hidden="true">✨</span>
+            </div>
+            <div class="bento-profile-info">
+              <button type="button" class="status-live-pill" data-about-action="cycle-status" title="${esc(t('aboutTapStatusHint'))}">
+                <span class="status-pulse" aria-hidden="true"></span>
+                <span class="status-live-text" id="aboutStatusText">${esc(statusText)}</span>
+              </button>
+              <h2 class="bento-name">Natthaset Attharungroj</h2>
+              <div class="bento-role-row">
+                <span class="bento-tag-chip">🎓 AIT @ KMITL</span>
+                <span class="bento-tag-chip soft">${esc(t('aboutRoleBadge'))}</span>
+              </div>
+            </div>
+          </div>
+          <p class="bento-bio">${esc(t('aboutBio'))}</p>
+        </div>
+
+        <!-- 2. Age & Birthday Card -->
+        <div class="bento-card bento-stat-card">
+          <div class="bento-card-head">
+            <span class="bento-kicker">🎂 ${esc(t('aboutAgeLabel'))} &amp; ${esc(t('aboutBirthdayLabel'))}</span>
+            <span class="bento-mini-badge">Gen Z &rsquo;06</span>
+          </div>
+          <div class="bento-age-row">
+            <div class="bento-big-num">20</div>
+            <div class="bento-age-meta">
+              <b>${esc(t('aboutYearsOld'))}</b>
+              <span>Born ${esc(t('aboutBirthdayVal'))}</span>
+            </div>
+          </div>
+          <div class="bento-sub-pill">♓ Pisces · 23 Feb 2006</div>
+        </div>
+
+        <!-- 3. Education Card (AIT @ KMITL) -->
+        <div class="bento-card bento-edu-card">
+          <div class="bento-card-head">
+            <span class="bento-kicker">🏛️ ${esc(t('aboutEducationLabel'))}</span>
+            <span class="bento-mini-badge neon">KMITL</span>
+          </div>
+          <div class="bento-edu-title">${esc(t('aboutMajor'))}</div>
+          <div class="bento-edu-sub">${esc(t('aboutUni'))}</div>
+          <div class="bento-edu-tags">
+            <span>🤖 Artificial Intelligence</span>
+            <span>💻 Computer Science</span>
+          </div>
+        </div>
+
+        <!-- 4. Interactive Stickers / Interests Card -->
+        <div class="bento-card bento-stickers-card">
+          <div class="bento-card-head">
+            <span class="bento-kicker">${esc(t('aboutStickersLabel'))}</span>
+          </div>
+          <div class="sticker-cloud">
+            ${stickersHtml}
+          </div>
+        </div>
+
+        <!-- 5. Interactive Quote + Vibe Equalizer Card -->
+        <div class="bento-card bento-vibe-card">
+          <div class="bento-card-head">
+            <span class="bento-kicker">🎧 ${esc(t('aboutVibeCardLabel'))}</span>
+            <div class="eq-bars ${aboutState.vibeBeat ? 'playing' : ''}" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <blockquote class="bento-quote" id="aboutQuoteBox" data-about-action="shuffle-quote">
+            <p>${esc(quoteObj.text)}</p>
+            <footer>${esc(quoteObj.tag)}</footer>
+          </blockquote>
+          <div class="bento-vibe-actions">
+            <button type="button" class="bento-btn" data-about-action="shuffle-quote">
+              <span>${esc(t('aboutShuffleBtn'))}</span>
+            </button>
+            <button type="button" class="bento-btn ${aboutState.vibeBeat ? 'active' : ''}" data-about-action="toggle-beat">
+              <span>${esc(aboutState.vibeBeat ? t('aboutBeatBtnOn') : t('aboutBeatBtnOff'))}</span>
+            </button>
+            <button type="button" class="bento-btn copy-btn ${aboutState.copiedProfile ? 'copied' : ''}" data-about-action="copy-profile">
+              ${icon('check', 'sm')}
+              <span>${esc(aboutState.copiedProfile ? t('aboutCopiedBtn') : t('aboutCopyProfileBtn'))}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>`;
+  }
+
+  function handleAboutClick(e) {
+    const btn = e.target.closest('[data-about-action]');
+    if (!btn) return false;
+    e.preventDefault();
+    const act = btn.dataset.aboutAction;
+
+    if (act === 'cycle-status') {
+      aboutState.statusIdx = (aboutState.statusIdx + 1) % ABOUT_STATUSES.length;
+      const txt = ABOUT_STATUSES[aboutState.statusIdx];
+      const el = document.getElementById('aboutStatusText');
+      if (el) {
+        el.textContent = txt;
+        btn.classList.remove('pop-anim');
+        void btn.offsetWidth;
+        btn.classList.add('pop-anim');
+      }
+      toast(txt);
+      return true;
+    }
+
+    if (act === 'sticker') {
+      const id = btn.dataset.stickerId;
+      aboutState.activeStickers[id] = !aboutState.activeStickers[id];
+      btn.classList.toggle('active', !!aboutState.activeStickers[id]);
+      btn.classList.remove('pop-anim');
+      void btn.offsetWidth;
+      btn.classList.add('pop-anim');
+      const st = ABOUT_STICKERS.find((x) => x.id === id);
+      if (st && aboutState.activeStickers[id]) toast(st.reaction);
+      return true;
+    }
+
+    if (act === 'shuffle-quote') {
+      aboutState.quoteIdx = (aboutState.quoteIdx + 1) % ABOUT_QUOTES.length;
+      const q = ABOUT_QUOTES[aboutState.quoteIdx];
+      const box = document.getElementById('aboutQuoteBox');
+      if (box) {
+        box.innerHTML = `<p>${esc(q.text)}</p><footer>${esc(q.tag)}</footer>`;
+        box.classList.remove('pop-anim');
+        void box.offsetWidth;
+        box.classList.add('pop-anim');
+      }
+      return true;
+    }
+
+    if (act === 'toggle-beat') {
+      aboutState.vibeBeat = !aboutState.vibeBeat;
+      const wrap = document.getElementById('aboutMeSection');
+      if (wrap) wrap.classList.toggle('vibe-glow', aboutState.vibeBeat);
+      const eq = wrap ? wrap.querySelector('.eq-bars') : null;
+      if (eq) eq.classList.toggle('playing', aboutState.vibeBeat);
+      btn.classList.toggle('active', aboutState.vibeBeat);
+      btn.innerHTML = `<span>${esc(aboutState.vibeBeat ? t('aboutBeatBtnOn') : t('aboutBeatBtnOff'))}</span>`;
+      return true;
+    }
+
+    if (act === 'copy-profile') {
+      const h = loadHost();
+      const info = [
+        'Natthaset Attharungroj (Age 20 · Born 23 Feb 2006)',
+        'Education: Artificial Intelligence Technology (AIT) @ KMITL',
+        h.line ? 'LINE: ' + h.line : '',
+        h.phone ? 'Phone: ' + h.phone : '',
+        h.email ? 'Email: ' + h.email : '',
+        h.promptPay ? 'PromptPay: ' + h.promptPay : ''
+      ].filter(Boolean).join('\n');
+      aboutState.copiedProfile = true;
+      copyText(info, t('aboutCopiedBtn'));
+      btn.classList.add('copied');
+      const sp = btn.querySelector('span');
+      if (sp) sp.textContent = t('aboutCopiedBtn');
+      setTimeout(() => {
+        aboutState.copiedProfile = false;
+        btn.classList.remove('copied');
+        if (sp) sp.textContent = t('aboutCopyProfileBtn');
+      }, 2200);
+      return true;
+    }
+
+    return false;
+  }
+
   try {
     if (typeof document !== 'undefined' && document.documentElement) {
       document.documentElement.lang = getLang();
@@ -641,6 +919,7 @@
     isHostUnlocked: isHostUnlocked, unlockHost: unlockHost, lockHost: lockHost,
     getLang: getLang, setLang: setLang, toggleLang: toggleLang, t: t, I18N: I18N,
     DEFAULT_HOST: DEFAULT_HOST, contactChannels: contactChannels, urlFor: urlFor,
-    toast: toast, copyText: copyText
+    toast: toast, copyText: copyText,
+    renderAboutBento: renderAboutBento, handleAboutClick: handleAboutClick
   };
 })(window);
