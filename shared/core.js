@@ -1,7 +1,7 @@
 /**
  * subm8 — shared core
  * Icons, formatting helpers, i18n, minimalist "About Me" Bento widget,
- * and the host profile (contact + payment info) shared across all sites.
+ * copy button checkmark morph, 5-tap confetti Easter egg, and host profile.
  */
 (function (global) {
   'use strict';
@@ -259,7 +259,8 @@
       hostSaved: 'บันทึกข้อมูลโฮสต์เรียบร้อย',
       hostUnlocked: 'ปลดล็อกโหมดโฮสต์แล้ว',
       hostLocked: 'ล็อกโหมดโฮสต์แล้ว',
-      copied: 'คัดลอกลงคลิปบอร์ดแล้ว',
+      copied: 'คัดลอกแล้ว!',
+      copiedTip: 'คัดลอกแล้ว!',
       hubHeadline: 'จัดการหารค่าแฟมิลี่<br>ครบจบในที่เดียว',
       hubTagline: 'เช็กสถานะการจ่ายเงินรายเดือน สแกนจ่ายผ่าน PromptPay QR และจัดการสมาชิกแต่ละกลุ่มอย่างเป็นระบบ',
       openDashboard: 'เปิดหน้าจัดการแฟมิลี่',
@@ -267,10 +268,10 @@
       hubTotalOutstanding: 'รอเก็บเพิ่มเดือนนี้',
       hubPaidProgress: 'จ่ายแล้ว {paid}/{n} คน',
       paymentChannelsTitle: 'ช่องทางโอนเงินของโฮสต์',
-      // About Me Bento translations (Minimalist, no emojis)
+      // About Me Bento translations
       aboutSectionEyebrow: 'ABOUT THE HOST · ผู้ดูแลระบบ',
       aboutRoleBadge: 'AI Tech Undergrad & Creator',
-      aboutBio: 'นักศึกษาสาย Artificial Intelligence ที่ชอบพัฒนาเว็บแอปและเครื่องมือที่ใช้งานง่าย ดูแลระบบแชร์สตรีมมิ่งให้ทุกคนในกลุ่มจัดการได้อย่างสะดวก',
+      aboutBio: 'นักศึกษาสาย Artificial Intelligence ที่ชอบพัฒนาเว็บแอป\u00A0และเครื่องมือที่ใช้งานง่าย ดูแลระบบแชร์บริการ\u00A0Streaming ให้ทุกคนในกลุ่มจัดการได้อย่างสะดวก',
       aboutTapStatusHint: 'แตะเพื่อสลับสถานะ',
       aboutAgeLabel: 'AGE & BIRTHDAY',
       aboutYearsOld: '20 ปี',
@@ -284,8 +285,8 @@
       aboutBeatBtnOn: 'Ambient: On',
       aboutBeatBtnOff: 'Ambient: Off',
       aboutCopyProfileBtn: 'คัดลอกข้อมูลโฮสต์',
-      aboutCopiedBtn: 'คัดลอกแล้ว',
-      aboutPhotoHint: 'วางไฟล์รูปที่ ./assets/profile.jpg'
+      aboutCopiedBtn: 'คัดลอกแล้ว!',
+      aboutPhotoHint: 'แตะรูป 5 ครั้งเพื่อปลดล็อก Easter Egg'
     },
     en: {
       langBtn: 'EN',
@@ -458,7 +459,8 @@
       hostSaved: 'Host profile saved',
       hostUnlocked: 'Host Mode unlocked',
       hostLocked: 'Host Mode locked',
-      copied: 'Copied to clipboard',
+      copied: 'Copied!',
+      copiedTip: 'คัดลอกแล้ว!',
       hubHeadline: 'Shared family plans,<br>effortlessly organized',
       hubTagline: 'Track monthly splits, scan PromptPay QR invoices, and keep every family group in sync.',
       openDashboard: 'Open family dashboard',
@@ -466,7 +468,7 @@
       hubTotalOutstanding: 'Remaining this month',
       hubPaidProgress: '{paid}/{n} paid',
       paymentChannelsTitle: 'Host payment channels',
-      // About Me Bento translations (Minimalist, no emojis)
+      // About Me Bento translations
       aboutSectionEyebrow: 'ABOUT THE HOST · CREATOR PROFILE',
       aboutRoleBadge: 'AI Tech Undergrad & Builder',
       aboutBio: 'AI technology undergraduate building clean web tools, exploring machine learning, and keeping our shared subscriptions running smoothly.',
@@ -483,8 +485,8 @@
       aboutBeatBtnOn: 'Ambient: On',
       aboutBeatBtnOff: 'Ambient: Off',
       aboutCopyProfileBtn: 'Copy Host Card',
-      aboutCopiedBtn: 'Copied',
-      aboutPhotoHint: 'Drop photo at ./assets/profile.jpg'
+      aboutCopiedBtn: 'คัดลอกแล้ว!',
+      aboutPhotoHint: 'Tap 5 times quickly for a secret surprise'
     }
   };
 
@@ -660,17 +662,52 @@
       document.body.appendChild(box);
     }
     const el = document.createElement('div');
-    el.className = 'toast ' + (type === 'error' ? 'error' : '');
-    el.innerHTML = icon(type === 'error' ? 'close' : 'check') + '<span>' + esc(message) + '</span>';
+    el.className = 'toast ' + (type === 'error' ? 'error' : type === 'vibe' ? 'vibe' : '');
+    el.innerHTML = icon(type === 'error' ? 'close' : type === 'vibe' ? 'sparkles' : 'check') + '<span>' + esc(message) + '</span>';
     box.appendChild(el);
     setTimeout(function () {
       el.style.opacity = '0'; el.style.transform = 'translateY(8px)';
       setTimeout(function () { el.remove(); }, 220);
-    }, 2800);
+    }, 3000);
   }
 
-  function copyText(text, okMsg) {
-    const done = function () { toast(okMsg || t('copied')); };
+  // Track last clicked button so copyText can morph it with a checkmark + "คัดลอกแล้ว!" tooltip
+  let lastClickedBtn = null;
+  if (typeof document !== 'undefined') {
+    document.addEventListener('pointerdown', function (e) {
+      const b = e.target && e.target.closest ? e.target.closest('button, [role="button"]') : null;
+      if (b) lastClickedBtn = b;
+    }, true);
+  }
+
+  function flashCopyButton(btn, tipText) {
+    if (!btn || btn.dataset.copyFlashing === '1') return;
+    btn.dataset.copyFlashing = '1';
+    const origHtml = btn.innerHTML;
+    const tip = tipText || 'คัดลอกแล้ว!';
+    btn.classList.add('is-copied');
+    btn.setAttribute('data-copied-tip', tip);
+
+    // Morph svg icon inside button to checkmark
+    const svgEl = btn.querySelector('svg');
+    if (svgEl) {
+      svgEl.innerHTML = ICONS.check;
+    }
+
+    setTimeout(function () {
+      btn.classList.remove('is-copied');
+      btn.removeAttribute('data-copied-tip');
+      if (btn.isConnected) btn.innerHTML = origHtml;
+      delete btn.dataset.copyFlashing;
+    }, 1500);
+  }
+
+  function copyText(text, okMsg, triggerEl) {
+    const btn = triggerEl || lastClickedBtn;
+    const done = function () {
+      if (btn) flashCopyButton(btn, 'คัดลอกแล้ว!');
+      toast(okMsg || t('copied'));
+    };
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done, fallback);
     } else { fallback(); }
@@ -681,6 +718,75 @@
       try { document.execCommand('copy'); done(); } catch (e) { toast('Could not copy', 'error'); }
       ta.remove();
     }
+  }
+
+  // ---- Canvas Confetti Burst (for the 5-tap Avatar Easter Egg) ------------
+  function fireConfetti(originX, originY) {
+    const canvas = document.createElement('canvas');
+    canvas.className = 'confetti-canvas';
+    canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999';
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.scale(dpr, dpr);
+
+    const cx = originX || W / 2;
+    const cy = originY || H / 3;
+    const colors = ['#4f46e5', '#818cf8', '#ec4899', '#10b981', '#f59e0b', '#06b6d4', '#a855f7'];
+    const particles = [];
+    for (let i = 0; i < 85; i++) {
+      const angle = (Math.random() * Math.PI * 2);
+      const speed = 4 + Math.random() * 11;
+      particles.push({
+        x: cx,
+        y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 4,
+        w: 6 + Math.random() * 6,
+        h: 4 + Math.random() * 5,
+        color: colors[i % colors.length],
+        rot: Math.random() * Math.PI * 2,
+        vRot: (Math.random() - 0.5) * 0.25,
+        alpha: 1,
+        gravity: 0.24 + Math.random() * 0.1
+      });
+    }
+
+    let frame = 0;
+    function step() {
+      frame++;
+      ctx.clearRect(0, 0, W, H);
+      let alive = false;
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.vx *= 0.985;
+        p.rot += p.vRot;
+        if (frame > 45) p.alpha -= 0.024;
+        if (p.alpha > 0 && p.y < H + 40) {
+          alive = true;
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        }
+      }
+      if (alive && frame < 120) {
+        requestAnimationFrame(step);
+      } else {
+        canvas.remove();
+      }
+    }
+    requestAnimationFrame(step);
   }
 
   // ---- Minimalist "About Me" Bento State & Component ----------------------
@@ -712,14 +818,19 @@
     statusIdx: 0,
     quoteIdx: 0,
     vibeBeat: true,
+    secretVibe: false,
     activeStickers: { ai: true, code: true },
-    copiedProfile: false
+    copiedProfile: false,
+    tapCount: 0,
+    tapTimer: null
   };
 
   function renderAboutBento(opts) {
     opts = opts || {};
     const prefix = opts.assetPrefix || './';
-    const statusText = ABOUT_STATUSES[aboutState.statusIdx % ABOUT_STATUSES.length];
+    const statusText = aboutState.secretVibe
+      ? 'Secret Vibe Mode Unlocked!'
+      : ABOUT_STATUSES[aboutState.statusIdx % ABOUT_STATUSES.length];
     const quoteObj = ABOUT_QUOTES[aboutState.quoteIdx % ABOUT_QUOTES.length];
 
     const stickersHtml = ABOUT_STICKERS.map((s) => {
@@ -731,7 +842,7 @@
     }).join('');
 
     return `
-    <section class="about-bento-wrap ${aboutState.vibeBeat ? 'vibe-glow' : ''}" id="aboutMeSection" aria-label="About Natthaset Attharungroj">
+    <section class="about-bento-wrap ${aboutState.vibeBeat ? 'vibe-glow' : ''} ${aboutState.secretVibe ? 'secret-vibe-mode' : ''}" id="aboutMeSection" aria-label="About Natthaset Attharungroj">
       <div class="about-section-head">
         <span class="about-eyebrow">${icon('user', 'sm')}<span>${esc(t('aboutSectionEyebrow'))}</span></span>
       </div>
@@ -740,7 +851,7 @@
         <!-- 1. Main Profile Hero Card -->
         <div class="bento-card bento-profile">
           <div class="bento-profile-top">
-            <div class="bento-photo-frame" title="${esc(t('aboutPhotoHint'))}">
+            <button type="button" class="bento-photo-frame" data-about-action="avatar-tap" title="${esc(t('aboutPhotoHint'))}" aria-label="Natthaset Attharungroj profile photo">
               <img
                 src="${esc(prefix)}assets/profile.jpg"
                 onerror="this.onerror=null;this.src='${esc(prefix)}assets/avatar-fallback.svg'"
@@ -748,7 +859,8 @@
                 class="bento-photo"
                 loading="lazy"
               >
-            </div>
+              <span class="avatar-tap-ring" id="avatarTapRing" aria-hidden="true"></span>
+            </button>
             <div class="bento-profile-info">
               <button type="button" class="status-live-pill" data-about-action="cycle-status" title="${esc(t('aboutTapStatusHint'))}">
                 <span class="status-pulse" aria-hidden="true"></span>
@@ -841,7 +953,38 @@
     e.preventDefault();
     const act = btn.dataset.aboutAction;
 
+    // 5-Tap Easter Egg on Avatar
+    if (act === 'avatar-tap') {
+      btn.classList.remove('avatar-wiggle');
+      void btn.offsetWidth;
+      btn.classList.add('avatar-wiggle');
+
+      aboutState.tapCount += 1;
+      if (aboutState.tapTimer) clearTimeout(aboutState.tapTimer);
+      aboutState.tapTimer = setTimeout(function () {
+        aboutState.tapCount = 0;
+      }, 2200);
+
+      if (aboutState.tapCount >= 5) {
+        aboutState.tapCount = 0;
+        aboutState.secretVibe = !aboutState.secretVibe;
+        const rect = btn.getBoundingClientRect();
+        fireConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        const wrap = document.getElementById('aboutMeSection');
+        if (wrap) wrap.classList.toggle('secret-vibe-mode', aboutState.secretVibe);
+        const stEl = document.getElementById('aboutStatusText');
+        if (stEl) {
+          stEl.textContent = aboutState.secretVibe
+            ? 'Secret Vibe Mode Unlocked!'
+            : ABOUT_STATUSES[aboutState.statusIdx % ABOUT_STATUSES.length];
+        }
+        toast('🚀 Secret Vibe Mode Unlocked!', 'vibe');
+      }
+      return true;
+    }
+
     if (act === 'cycle-status') {
+      aboutState.secretVibe = false;
       aboutState.statusIdx = (aboutState.statusIdx + 1) % ABOUT_STATUSES.length;
       const txt = ABOUT_STATUSES[aboutState.statusIdx];
       const el = document.getElementById('aboutStatusText');
@@ -901,14 +1044,14 @@
         h.promptPay ? 'PromptPay: ' + h.promptPay : ''
       ].filter(Boolean).join('\n');
       aboutState.copiedProfile = true;
-      copyText(info, t('aboutCopiedBtn'));
+      copyText(info, t('aboutCopiedBtn'), btn);
       btn.classList.add('copied');
       btn.innerHTML = `${icon('check', 'sm')}<span>${esc(t('aboutCopiedBtn'))}</span>`;
       setTimeout(() => {
         aboutState.copiedProfile = false;
         btn.classList.remove('copied');
-        btn.innerHTML = `${icon('copy', 'sm')}<span>${esc(t('aboutCopyProfileBtn'))}</span>`;
-      }, 2200);
+        if (btn.isConnected) btn.innerHTML = `${icon('copy', 'sm')}<span>${esc(t('aboutCopyProfileBtn'))}</span>`;
+      }, 2000);
       return true;
     }
 
@@ -927,7 +1070,7 @@
     isHostUnlocked: isHostUnlocked, unlockHost: unlockHost, lockHost: lockHost,
     getLang: getLang, setLang: setLang, toggleLang: toggleLang, t: t, I18N: I18N,
     DEFAULT_HOST: DEFAULT_HOST, contactChannels: contactChannels, urlFor: urlFor,
-    toast: toast, copyText: copyText,
+    toast: toast, copyText: copyText, flashCopyButton: flashCopyButton, fireConfetti: fireConfetti,
     renderAboutBento: renderAboutBento, handleAboutClick: handleAboutClick
   };
 })(window);

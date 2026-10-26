@@ -123,7 +123,7 @@
   }
 
   function hero(st) {
-    const R = 42, C = 2 * Math.PI * R, dash = (C * st.pct) / 100;
+    const R = 44, C = 2 * Math.PI * R, dash = (C * st.pct) / 100;
     const paidLabel = t('paidCount', { paid: st.paid, n: st.n });
     const tagline = (getLang() === 'th' && CFG.taglineTh) ? CFG.taglineTh : CFG.tagline;
     return `
@@ -172,11 +172,12 @@
       `<button class="tab ${ui.tab === id ? 'active' : ''}" data-action="tab" data-id="${id}" role="tab" aria-selected="${ui.tab === id}">
          ${icon(ic, 'sm')}<span>${label}</span>${count != null ? `<span class="count">${count}</span>` : ''}
        </button>`;
-    return `<nav class="tabs" role="tablist">
+    return `<nav class="tabs" id="tabsNav" role="tablist">
       ${tabBtn('payments', 'wallet', t('tabPayments'), null)}
       ${tabBtn('members', 'users', t('tabMembers'), site.members.length)}
       ${tabBtn('plan', 'sliders', t('tabPlan'), null)}
       ${tabBtn('about', 'user', t('tabAbout'), null)}
+      <span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>
     </nav>`;
   }
 
@@ -418,6 +419,31 @@
     </footer>`;
   }
 
+  let lastTabMetrics = null;
+
+  function syncTabIndicator(animate) {
+    const nav = document.getElementById('tabsNav');
+    const ind = document.getElementById('tabIndicator');
+    if (!nav || !ind) return;
+    const active = nav.querySelector('.tab.active');
+    if (!active) return;
+    const nextLeft = active.offsetLeft;
+    const nextWidth = active.offsetWidth;
+
+    if (animate && lastTabMetrics) {
+      ind.style.transition = 'none';
+      ind.style.transform = 'translateX(' + lastTabMetrics.left + 'px)';
+      ind.style.width = lastTabMetrics.width + 'px';
+      void ind.offsetWidth;
+      ind.style.transition = 'transform .3s cubic-bezier(.22, 1, .36, 1), width .3s cubic-bezier(.22, 1, .36, 1)';
+    } else {
+      ind.style.transition = 'none';
+    }
+    ind.style.transform = 'translateX(' + nextLeft + 'px)';
+    ind.style.width = nextWidth + 'px';
+    lastTabMetrics = { left: nextLeft, width: nextWidth };
+  }
+
   function render() {
     const st = stats(ui.month);
     const body = ui.tab === 'members'
@@ -427,8 +453,10 @@
         : ui.tab === 'about'
           ? SM.renderAboutBento({ assetPrefix: '../' })
           : paymentsTab(st);
+    const shouldAnim = ui.anim;
     app.innerHTML = header() + hero(st) +
-      `<main class="container">${kpis(st)}${tabsNav()}${body}</main>` + footer();
+      `<main class="container">${kpis(st)}${tabsNav()}<div class="tab-stage ${shouldAnim ? 'tab-enter' : ''}">${body}</div></main>` + footer();
+    syncTabIndicator(shouldAnim);
     ui.anim = false;
   }
 
@@ -480,7 +508,7 @@
       ? `<div class="contact-item">
            <a class="contact-link" href="${esc(c.href)}" ${c.key === 'phone' || c.key === 'email' ? '' : 'target="_blank" rel="noopener"'}>
              <span class="contact-ic ${c.cls}">${icon(c.icon)}</span>
-             <span class="contact-main"><small>${c.label}</small><b>${esc(c.value)}</b></span>
+             <span class="contact-main"><small>${c.label}</small><b class="${c.key === 'email' ? 'email-val' : ''}">${esc(c.value)}</b></span>
            </a>
            <button class="icon-btn" type="button" data-action="copy" data-copy="${esc(c.value)}" title="${esc(t('copyBtn'))}" aria-label="Copy ${c.label}">${icon('copy', 'sm')}</button>
          </div>`

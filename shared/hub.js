@@ -85,7 +85,7 @@
         <div class="contact-item">
           <a class="contact-link" href="${esc(c.href)}" ${c.key === 'phone' || c.key === 'email' ? '' : 'target="_blank" rel="noopener"'}>
             <span class="contact-ic ${c.cls}">${icon(c.icon)}</span>
-            <span class="contact-main"><small>${c.label}</small><b>${esc(c.value)}</b></span>
+            <span class="contact-main"><small>${c.label}</small><b class="${c.key === 'email' ? 'email-val' : ''}">${esc(c.value)}</b></span>
           </a>
           <button class="icon-btn" data-copy="${esc(c.value)}" aria-label="Copy ${c.label}">${icon('copy', 'sm')}</button>
         </div>`).join('')
