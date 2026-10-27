@@ -286,7 +286,17 @@
       aboutBeatBtnOff: 'Ambient: Off',
       aboutCopyProfileBtn: 'คัดลอกข้อมูลโฮสต์',
       aboutCopiedBtn: 'คัดลอกแล้ว!',
-      aboutPhotoHint: 'แตะรูป 5 ครั้งเพื่อปลดล็อก Easter Egg'
+      aboutPhotoHint: 'แตะรูป 5 ครั้งเพื่อปลดล็อก Easter Egg',
+      aboutOpenCardBtn: 'ดูการ์ดโปรไฟล์',
+      aboutTapCardHint: 'แตะเพื่อดูรายละเอียด',
+      popupSecretBadge: 'SECRET VIBE MODE · UNLOCKED',
+      popupCreatorBadge: 'CREATOR & HOST PASS',
+      popupFireConfetti: 'จุดพลุฉลองอีกครั้ง',
+      popupLiveDaysLabel: 'จำนวนวันที่เติบโตมา',
+      popupNextBdayLabel: 'นับถอยหลังวันเกิดถัดไป (23 ก.พ.)',
+      popupDaysUnit: 'วัน',
+      popupCoreFocusLabel: 'หัวข้อที่ศึกษาและสนใจ',
+      popupToolsLabel: 'เครื่องมือ & สิ่งที่โฟกัส'
     },
     en: {
       langBtn: 'EN',
@@ -486,7 +496,17 @@
       aboutBeatBtnOff: 'Ambient: Off',
       aboutCopyProfileBtn: 'Copy Host Card',
       aboutCopiedBtn: 'คัดลอกแล้ว!',
-      aboutPhotoHint: 'Tap 5 times quickly for a secret surprise'
+      aboutPhotoHint: 'Tap 5 times quickly for a secret surprise',
+      aboutOpenCardBtn: 'Creator Card',
+      aboutTapCardHint: 'Tap for details',
+      popupSecretBadge: 'SECRET VIBE MODE · UNLOCKED',
+      popupCreatorBadge: 'CREATOR & HOST PASS',
+      popupFireConfetti: 'Launch Confetti',
+      popupLiveDaysLabel: 'Days on Earth',
+      popupNextBdayLabel: 'Next Birthday (23 Feb)',
+      popupDaysUnit: 'days',
+      popupCoreFocusLabel: 'Core Focus & Coursework',
+      popupToolsLabel: 'Stack & Daily Focus'
     }
   };
 
@@ -806,12 +826,54 @@
   ];
 
   const ABOUT_STICKERS = [
-    { id: 'ai', icon: 'cpu', label: 'AI & Machine Learning', reaction: 'AI & Machine Learning — AIT @ KMITL' },
-    { id: 'code', icon: 'code', label: 'Web Engineering', reaction: 'Clean, modular frontend architecture' },
-    { id: 'ui', icon: 'layers', label: 'UI/UX Design', reaction: 'Minimalist interfaces & smooth motion' },
-    { id: 'music', icon: 'music', label: 'Music & Lo-Fi', reaction: 'Lo-fi & indie playlists on repeat' },
-    { id: 'coffee', icon: 'coffee', label: 'Coffee', reaction: 'Iced Americano daily routine' },
-    { id: 'term', icon: 'terminal', label: 'Automation', reaction: 'Building fast developer workflows' }
+    {
+      id: 'ai',
+      icon: 'cpu',
+      label: 'AI & Machine Learning',
+      reaction: 'AI & Machine Learning — AIT @ KMITL',
+      desc: 'Studying neural networks, computer vision, and applied machine learning systems at AIT, KMITL.',
+      tags: ['Python', 'PyTorch', 'Deep Learning', 'Data Science', 'LLMs']
+    },
+    {
+      id: 'code',
+      icon: 'code',
+      label: 'Web Engineering',
+      reaction: 'Clean, modular frontend architecture',
+      desc: 'Crafting fast, responsive web applications with zero bloat and clean component architecture.',
+      tags: ['JavaScript', 'TypeScript', 'Modern CSS', 'Web APIs', 'Git']
+    },
+    {
+      id: 'ui',
+      icon: 'layers',
+      label: 'UI/UX Design',
+      reaction: 'Minimalist interfaces & smooth motion',
+      desc: 'Designing tactile interfaces with Bento layouts, spring physics, and mobile-first ergonomics.',
+      tags: ['Bento Grid', 'Micro-Interactions', 'iOS Ergonomics', 'Design Systems']
+    },
+    {
+      id: 'music',
+      icon: 'music',
+      label: 'Music & Lo-Fi',
+      reaction: 'Lo-fi & indie playlists on repeat',
+      desc: 'Late-night coding sessions soundtracked by chillhop, indie R&B, and ambient instrumentals.',
+      tags: ['Lo-Fi Beats', 'Indie R&B', 'Apple Music', 'YouTube Premium']
+    },
+    {
+      id: 'coffee',
+      icon: 'coffee',
+      label: 'Coffee',
+      reaction: 'Iced Americano daily routine',
+      desc: 'Fueling morning lectures at KMITL and evening side projects with specialty iced black coffee.',
+      tags: ['Iced Americano', 'Light Roast', 'Specialty Brew', 'Morning Routine']
+    },
+    {
+      id: 'term',
+      icon: 'terminal',
+      label: 'Automation',
+      reaction: 'Building fast developer workflows',
+      desc: 'Automating repetitive tasks, CLI setups, and family subscription tracking with custom scripts.',
+      tags: ['CLI Workflows', 'macOS', 'Shell Scripting', 'Productivity']
+    }
   ];
 
   const aboutState = {
@@ -822,12 +884,230 @@
     activeStickers: { ai: true, code: true },
     copiedProfile: false,
     tapCount: 0,
-    tapTimer: null
+    tapTimer: null,
+    assetPrefix: './'
   };
+
+  function calcBirthdayStats() {
+    const birth = new Date(2006, 1, 23); // 23 Feb 2006
+    const now = new Date();
+    const diffMs = Math.max(0, now.getTime() - birth.getTime());
+    const daysLived = Math.floor(diffMs / 86400000);
+    let nextBday = new Date(now.getFullYear(), 1, 23);
+    if (now > nextBday) {
+      nextBday = new Date(now.getFullYear() + 1, 1, 23);
+    }
+    const daysUntil = Math.max(0, Math.ceil((nextBday.getTime() - now.getTime()) / 86400000));
+    return { daysLived: daysLived, daysUntil: daysUntil };
+  }
+
+  function closeAboutPopup() {
+    if (typeof document === 'undefined') return;
+    const existing = document.getElementById('aboutPopupOverlay');
+    if (existing) {
+      existing.classList.add('closing');
+      setTimeout(() => {
+        if (existing.parentNode) existing.remove();
+      }, 180);
+    }
+  }
+
+  function openAboutPopup(type, payload) {
+    if (typeof document === 'undefined') return;
+    const prev = document.getElementById('aboutPopupOverlay');
+    if (prev) prev.remove();
+
+    const prefix = aboutState.assetPrefix || './';
+    const quoteObj = ABOUT_QUOTES[aboutState.quoteIdx % ABOUT_QUOTES.length];
+    let modalClass = 'modal about-popup-modal';
+    let innerHtml = '';
+
+    if (type === 'secret-vibe' || type === 'creator') {
+      const isSecret = type === 'secret-vibe' || aboutState.secretVibe;
+      if (isSecret) modalClass += ' secret-holo-modal';
+      const badgeLabel = isSecret ? t('popupSecretBadge') : t('popupCreatorBadge');
+      const statusLine = isSecret
+        ? '🚀 Secret Vibe Mode Unlocked!'
+        : ABOUT_STATUSES[aboutState.statusIdx % ABOUT_STATUSES.length];
+
+      innerHtml = `
+        <div class="modal-sheet-bar"></div>
+        <div class="about-popup-head">
+          <span class="holo-pass-badge ${isSecret ? 'secret' : ''}">
+            <span class="status-pulse" aria-hidden="true"></span>
+            <span>${esc(badgeLabel)}</span>
+          </span>
+          <button type="button" class="icon-btn" data-about-action="close-popup" aria-label="${esc(t('close'))}">${icon('x', 'sm')}</button>
+        </div>
+        <div class="modal-body about-popup-body">
+          <div class="holo-id-card ${isSecret ? 'is-secret' : ''}">
+            <div class="holo-id-top">
+              <div class="holo-avatar-wrap">
+                <img
+                  src="${esc(prefix)}assets/profile.jpg"
+                  onerror="this.onerror=null;this.src='${esc(prefix)}assets/avatar-fallback.svg'"
+                  alt="Natthaset Attharungroj"
+                  class="holo-avatar"
+                >
+              </div>
+              <div class="holo-id-meta">
+                <span class="holo-pass-id">ID #AIT-2302-2006</span>
+                <h3>Natthaset Attharungroj</h3>
+                <p>Artificial Intelligence Technology · KMITL</p>
+              </div>
+            </div>
+
+            <div class="holo-status-bar">
+              <span class="status-pulse" aria-hidden="true"></span>
+              <span id="popupStatusText">${esc(statusLine)}</span>
+            </div>
+
+            <div class="holo-stats-grid">
+              <div class="holo-stat">
+                <span class="k">${esc(t('aboutAgeLabel'))}</span>
+                <b class="v">20 yrs · 23 Feb 2006</b>
+              </div>
+              <div class="holo-stat">
+                <span class="k">${esc(t('aboutEducationLabel'))}</span>
+                <b class="v">AIT @ KMITL</b>
+              </div>
+              <div class="holo-stat">
+                <span class="k">FOCUS</span>
+                <b class="v">AI · Web · UI/UX</b>
+              </div>
+              <div class="holo-stat">
+                <span class="k">DAILY FUEL</span>
+                <b class="v">Iced Americano</b>
+              </div>
+            </div>
+
+            <blockquote class="holo-quote" id="popupQuoteBox" data-about-action="popup-quote">
+              <p>${esc(quoteObj.text)}</p>
+              <footer>${esc(quoteObj.tag)} · ${esc(t('aboutShuffleBtn'))}</footer>
+            </blockquote>
+          </div>
+        </div>
+        <div class="modal-foot about-popup-foot">
+          <button type="button" class="btn btn-ghost" data-about-action="popup-confetti">
+            ${icon('sparkle', 'sm')}
+            <span>${esc(t('popupFireConfetti'))}</span>
+          </button>
+          <button type="button" class="btn btn-primary copy-btn" data-about-action="copy-profile">
+            ${icon('copy', 'sm')}
+            <span>${esc(t('aboutCopyProfileBtn'))}</span>
+          </button>
+        </div>`;
+    } else if (type === 'age') {
+      const bstats = calcBirthdayStats();
+      innerHtml = `
+        <div class="modal-sheet-bar"></div>
+        <div class="about-popup-head">
+          <span class="holo-pass-badge">
+            ${icon('calendar', 'sm')}
+            <span>${esc(t('aboutAgeLabel'))}</span>
+          </span>
+          <button type="button" class="icon-btn" data-about-action="close-popup" aria-label="${esc(t('close'))}">${icon('x', 'sm')}</button>
+        </div>
+        <div class="modal-body about-popup-body">
+          <div class="popup-spotlight-hero">
+            <div class="popup-big-badge">20</div>
+            <div>
+              <h3>Natthaset Attharungroj</h3>
+              <p>${esc(t('aboutBirthdayVal'))} · Bangkok, Thailand</p>
+            </div>
+          </div>
+          <div class="holo-stats-grid">
+            <div class="holo-stat">
+              <span class="k">${esc(t('popupLiveDaysLabel'))}</span>
+              <b class="v">${bstats.daysLived.toLocaleString()} ${esc(t('popupDaysUnit'))}</b>
+            </div>
+            <div class="holo-stat">
+              <span class="k">${esc(t('popupNextBdayLabel'))}</span>
+              <b class="v">${bstats.daysUntil} ${esc(t('popupDaysUnit'))}</b>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot about-popup-foot">
+          <button type="button" class="btn btn-ghost" data-about-action="popup-confetti">
+            ${icon('sparkle', 'sm')}
+            <span>${esc(t('popupFireConfetti'))}</span>
+          </button>
+          <button type="button" class="btn btn-primary" data-about-action="close-popup">${esc(t('close'))}</button>
+        </div>`;
+    } else if (type === 'edu') {
+      innerHtml = `
+        <div class="modal-sheet-bar"></div>
+        <div class="about-popup-head">
+          <span class="holo-pass-badge">
+            ${icon('graduation', 'sm')}
+            <span>${esc(t('aboutEducationLabel'))} · KMITL</span>
+          </span>
+          <button type="button" class="icon-btn" data-about-action="close-popup" aria-label="${esc(t('close'))}">${icon('x', 'sm')}</button>
+        </div>
+        <div class="modal-body about-popup-body">
+          <div class="popup-edu-card">
+            <span class="bento-mini-badge neon">AIT @ KMITL</span>
+            <h3>${esc(t('aboutMajor'))}</h3>
+            <p>${esc(t('aboutUni'))}</p>
+            <div class="popup-divider"></div>
+            <div class="popup-kicker">${esc(t('popupCoreFocusLabel'))}</div>
+            <div class="popup-chip-cloud">
+              <span>Machine Learning</span>
+              <span>Deep Learning</span>
+              <span>Computer Vision</span>
+              <span>Natural Language Processing</span>
+              <span>Data Structures & Algorithms</span>
+              <span>Software Engineering</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot about-popup-foot">
+          <button type="button" class="btn btn-primary" data-about-action="close-popup">${esc(t('close'))}</button>
+        </div>`;
+    } else if (type === 'sticker') {
+      const st = ABOUT_STICKERS.find((x) => x.id === payload) || ABOUT_STICKERS[0];
+      const tagsHtml = (st.tags || []).map((tg) => `<span>${esc(tg)}</span>`).join('');
+      innerHtml = `
+        <div class="modal-sheet-bar"></div>
+        <div class="about-popup-head">
+          <span class="holo-pass-badge">
+            ${icon(st.icon, 'sm')}
+            <span>${esc(t('aboutStickersLabel'))}</span>
+          </span>
+          <button type="button" class="icon-btn" data-about-action="close-popup" aria-label="${esc(t('close'))}">${icon('x', 'sm')}</button>
+        </div>
+        <div class="modal-body about-popup-body">
+          <div class="popup-edu-card">
+            <div class="popup-sticker-title">
+              <span class="popup-sticker-ic">${icon(st.icon, 'md')}</span>
+              <div>
+                <h3>${esc(st.label)}</h3>
+                <small>${esc(st.reaction)}</small>
+              </div>
+            </div>
+            <p class="popup-sticker-desc">${esc(st.desc)}</p>
+            <div class="popup-divider"></div>
+            <div class="popup-kicker">${esc(t('popupToolsLabel'))}</div>
+            <div class="popup-chip-cloud">${tagsHtml}</div>
+          </div>
+        </div>
+        <div class="modal-foot about-popup-foot">
+          <button type="button" class="btn btn-primary" data-about-action="close-popup">${esc(t('close'))}</button>
+        </div>`;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay about-popup-overlay';
+    overlay.id = 'aboutPopupOverlay';
+    overlay.setAttribute('data-about-action', 'overlay-bg');
+    overlay.innerHTML = `<div class="${modalClass}" role="dialog" aria-modal="true">${innerHtml}</div>`;
+    document.body.appendChild(overlay);
+  }
 
   function renderAboutBento(opts) {
     opts = opts || {};
     const prefix = opts.assetPrefix || './';
+    aboutState.assetPrefix = prefix;
     const statusText = aboutState.secretVibe
       ? 'Secret Vibe Mode Unlocked!'
       : ABOUT_STATUSES[aboutState.statusIdx % ABOUT_STATUSES.length];
@@ -845,6 +1125,10 @@
     <section class="about-bento-wrap ${aboutState.vibeBeat ? 'vibe-glow' : ''} ${aboutState.secretVibe ? 'secret-vibe-mode' : ''}" id="aboutMeSection" aria-label="About Natthaset Attharungroj">
       <div class="about-section-head">
         <span class="about-eyebrow">${icon('user', 'sm')}<span>${esc(t('aboutSectionEyebrow'))}</span></span>
+        <button type="button" class="about-pass-trigger" data-about-action="open-popup" data-popup-type="creator">
+          ${icon('sparkle', 'sm')}
+          <span>${esc(t('aboutOpenCardBtn'))}</span>
+        </button>
       </div>
 
       <div class="bento-grid">
@@ -860,6 +1144,7 @@
                 loading="lazy"
               >
               <span class="avatar-tap-ring" id="avatarTapRing" aria-hidden="true"></span>
+              <span class="avatar-tap-badge" id="avatarTapBadge" aria-hidden="true"></span>
             </button>
             <div class="bento-profile-info">
               <button type="button" class="status-live-pill" data-about-action="cycle-status" title="${esc(t('aboutTapStatusHint'))}">
@@ -876,8 +1161,8 @@
           <p class="bento-bio">${esc(t('aboutBio'))}</p>
         </div>
 
-        <!-- 2. Age & Birthday Card -->
-        <div class="bento-card bento-stat-card">
+        <!-- 2. Age & Birthday Card (Interactive Popup) -->
+        <div class="bento-card bento-stat-card is-interactive" data-about-action="open-popup" data-popup-type="age" role="button" tabindex="0" title="${esc(t('aboutTapCardHint'))}">
           <div class="bento-card-head">
             <span class="bento-kicker">${icon('calendar', 'sm')}<span>${esc(t('aboutAgeLabel'))}</span></span>
             <span class="bento-mini-badge">2006</span>
@@ -892,8 +1177,8 @@
           <div class="bento-sub-pill">23 Feb 2006 · Bangkok, TH</div>
         </div>
 
-        <!-- 3. Education Card (AIT @ KMITL) -->
-        <div class="bento-card bento-edu-card">
+        <!-- 3. Education Card (AIT @ KMITL - Interactive Popup) -->
+        <div class="bento-card bento-edu-card is-interactive" data-about-action="open-popup" data-popup-type="edu" role="button" tabindex="0" title="${esc(t('aboutTapCardHint'))}">
           <div class="bento-card-head">
             <span class="bento-kicker">${icon('graduation', 'sm')}<span>${esc(t('aboutEducationLabel'))}</span></span>
             <span class="bento-mini-badge neon">KMITL</span>
@@ -910,6 +1195,7 @@
         <div class="bento-card bento-stickers-card">
           <div class="bento-card-head">
             <span class="bento-kicker">${icon('layers', 'sm')}<span>${esc(t('aboutStickersLabel'))}</span></span>
+            <span class="bento-tap-hint">${esc(t('aboutTapCardHint'))}</span>
           </div>
           <div class="sticker-cloud">
             ${stickersHtml}
@@ -948,43 +1234,93 @@
   }
 
   function handleAboutClick(e) {
+    // Allow clicking outside the popup dialog to close it
+    if (e.target && e.target.getAttribute && e.target.getAttribute('data-about-action') === 'overlay-bg') {
+      closeAboutPopup();
+      return true;
+    }
+
     const btn = e.target.closest('[data-about-action]');
     if (!btn) return false;
-    e.preventDefault();
     const act = btn.dataset.aboutAction;
+    if (act === 'overlay-bg') return false;
+    e.preventDefault();
 
-    // 5-Tap Easter Egg on Avatar
+    if (act === 'close-popup') {
+      closeAboutPopup();
+      return true;
+    }
+
+    if (act === 'open-popup') {
+      const pType = btn.dataset.popupType || 'creator';
+      openAboutPopup(pType);
+      return true;
+    }
+
+    if (act === 'popup-confetti') {
+      const rect = btn.getBoundingClientRect();
+      fireConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      return true;
+    }
+
+    if (act === 'popup-quote') {
+      aboutState.quoteIdx = (aboutState.quoteIdx + 1) % ABOUT_QUOTES.length;
+      const q = ABOUT_QUOTES[aboutState.quoteIdx];
+      const pBox = document.getElementById('popupQuoteBox');
+      if (pBox) {
+        pBox.innerHTML = `<p>${esc(q.text)}</p><footer>${esc(q.tag)} · ${esc(t('aboutShuffleBtn'))}</footer>`;
+        pBox.classList.remove('pop-anim');
+        void pBox.offsetWidth;
+        pBox.classList.add('pop-anim');
+      }
+      const box = document.getElementById('aboutQuoteBox');
+      if (box) {
+        box.innerHTML = `<p>${esc(q.text)}</p><footer>${esc(q.tag)}</footer>`;
+      }
+      return true;
+    }
+
+    // 5-Tap Easter Egg on Avatar -> Confetti + Toast + Secret Vibe Popup Modal!
     if (act === 'avatar-tap') {
       btn.classList.remove('avatar-wiggle');
       void btn.offsetWidth;
       btn.classList.add('avatar-wiggle');
 
       aboutState.tapCount += 1;
+      const badgeEl = document.getElementById('avatarTapBadge');
+      if (badgeEl && aboutState.tapCount < 5) {
+        badgeEl.textContent = aboutState.tapCount + '/5';
+        badgeEl.classList.add('show');
+      }
+
       if (aboutState.tapTimer) clearTimeout(aboutState.tapTimer);
       aboutState.tapTimer = setTimeout(function () {
         aboutState.tapCount = 0;
+        if (badgeEl) badgeEl.classList.remove('show');
       }, 2200);
 
       if (aboutState.tapCount >= 5) {
         aboutState.tapCount = 0;
-        aboutState.secretVibe = !aboutState.secretVibe;
+        if (badgeEl) badgeEl.classList.remove('show');
+        aboutState.secretVibe = true;
         const rect = btn.getBoundingClientRect();
         fireConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
         const wrap = document.getElementById('aboutMeSection');
-        if (wrap) wrap.classList.toggle('secret-vibe-mode', aboutState.secretVibe);
+        if (wrap) wrap.classList.add('secret-vibe-mode');
         const stEl = document.getElementById('aboutStatusText');
         if (stEl) {
-          stEl.textContent = aboutState.secretVibe
-            ? 'Secret Vibe Mode Unlocked!'
-            : ABOUT_STATUSES[aboutState.statusIdx % ABOUT_STATUSES.length];
+          stEl.textContent = 'Secret Vibe Mode Unlocked!';
         }
         toast('🚀 Secret Vibe Mode Unlocked!', 'vibe');
+        openAboutPopup('secret-vibe');
       }
       return true;
     }
 
     if (act === 'cycle-status') {
       aboutState.secretVibe = false;
+      const wrap = document.getElementById('aboutMeSection');
+      if (wrap) wrap.classList.remove('secret-vibe-mode');
       aboutState.statusIdx = (aboutState.statusIdx + 1) % ABOUT_STATUSES.length;
       const txt = ABOUT_STATUSES[aboutState.statusIdx];
       const el = document.getElementById('aboutStatusText');
@@ -999,13 +1335,12 @@
 
     if (act === 'sticker') {
       const id = btn.dataset.stickerId;
-      aboutState.activeStickers[id] = !aboutState.activeStickers[id];
-      btn.classList.toggle('active', !!aboutState.activeStickers[id]);
+      aboutState.activeStickers[id] = true;
+      btn.classList.add('active');
       btn.classList.remove('pop-anim');
       void btn.offsetWidth;
       btn.classList.add('pop-anim');
-      const st = ABOUT_STICKERS.find((x) => x.id === id);
-      if (st && aboutState.activeStickers[id]) toast(st.reaction);
+      openAboutPopup('sticker', id);
       return true;
     }
 
@@ -1058,6 +1393,14 @@
     return false;
   }
 
+  if (typeof document !== 'undefined') {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('aboutPopupOverlay')) {
+        closeAboutPopup();
+      }
+    });
+  }
+
   try {
     if (typeof document !== 'undefined' && document.documentElement) {
       document.documentElement.lang = getLang();
@@ -1071,6 +1414,7 @@
     getLang: getLang, setLang: setLang, toggleLang: toggleLang, t: t, I18N: I18N,
     DEFAULT_HOST: DEFAULT_HOST, contactChannels: contactChannels, urlFor: urlFor,
     toast: toast, copyText: copyText, flashCopyButton: flashCopyButton, fireConfetti: fireConfetti,
-    renderAboutBento: renderAboutBento, handleAboutClick: handleAboutClick
+    renderAboutBento: renderAboutBento, handleAboutClick: handleAboutClick,
+    openAboutPopup: openAboutPopup, closeAboutPopup: closeAboutPopup
   };
 })(window);
